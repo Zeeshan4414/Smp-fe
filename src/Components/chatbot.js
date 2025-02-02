@@ -1,71 +1,76 @@
-import axios from 'axios';
-import { useState } from 'react';
+import React, { useState } from "react";
 
 const Chatbot = () => {
-  const [userMessage, setUserMessage] = useState('');
-  const [chatHistory, setChatHistory] = useState([]);
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
   const API_URL = "https://smp-be-mysql.vercel.app/open-ai/generate-captions";
 
-  const handleSendMessage = async () => {
-    if (!userMessage) return;
+  const handleSend = async () => {
+    if (!input) return;
 
-    const newMessages = [...chatHistory, { sender: "user", text: userMessage }];
-    setChatHistory(newMessages);
-    setUserMessage("");
+    const newMessages = [...messages, { sender: "user", text: input }];
+    setMessages(newMessages);
+    setInput("");
 
     try {
-      const response = await axios.post(API_URL, {
+      const response = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userInput: `Generate a social media caption for: ${userMessage}` }),
+        body: JSON.stringify({ userInput: `Generate a social media caption for: ${input}` }),
       });
 
-      const botMessage = { role: 'bot', content: response.data.caption || "No relevant response received." };
-      setChatHistory([...newMessages, botMessage]);
+      const data = await response.json();
+      const botMessage = data.response || "No relevant response received.";
+
+      setMessages([...newMessages, { sender: "bot", text: botMessage }]);
     } catch (error) {
-      console.error('Error generating caption:', error.message);
-      const errorMessage = { role: 'bot', content: "Error generating caption." };
-      setChatHistory([...newMessages, errorMessage]);
+      console.error("Error fetching response:", error);
+      setMessages([...newMessages, { sender: "bot", text: "Error fetching response." }]);
     }
   };
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
-    alert("Caption copied to clipboard!");
+    alert("Captions copied to clipboard!");
   };
 
   return (
-    <div className="p-4 w-full max-w-md mx-auto mt-10 border rounded shadow-lg bg-white">
-      <h2 className="text-xl font-bold mb-4 text-center">Social Manager Pro - Caption Generator</h2>
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg space-y-6">
+      <h2 className="text-3xl font-semibold text-center text-gray-900">AI Caption Generator</h2>
 
-      <div className="space-y-4 flex flex-col h-[500px]">
-        <div className="h-full overflow-y-auto border p-2 rounded bg-gray-100">
-          {chatHistory.map((message, index) => (
-            <div key={index} className={`p-2 ${message.role === "user" ? "text-right" : "text-left"}`}>
-              <strong>{message.role === "user" ? "You: " : "Bot: "}</strong>
-              {message.content}
-              {message.role === "bot" && (
-                <button
-                  className="ml-2 px-2 py-1 bg-blue-500 text-white text-sm rounded"
-                  onClick={() => handleCopy(message.content)}
-                >
-                  Copy
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-center">
-          <input
-            className="border p-2 w-3/4 rounded shadow-sm"
-            value={userMessage}
-            onChange={(e) => setUserMessage(e.target.value)}
-            placeholder="Type your post idea..."
-          />
-          <button className="bg-blue-500 text-white px-4 py-2 rounded ml-2" onClick={handleSendMessage}>
-            Send
-          </button>
-        </div>
+      {/* Chat Box */}
+      <div className="chat-box max-h-96 overflow-y-auto bg-gray-50 p-4 rounded-lg shadow-inner space-y-4">
+        {messages.map((msg, index) => (
+          <div key={index} className={`p-3 mb-3 rounded-lg ${msg.sender === "user" ? "bg-blue-600 text-white self-end ml-auto max-w-xs text-right" : "bg-gray-300 text-gray-800"}`}>
+            <strong>{msg.sender === "user" ? "You: " : "Bot: "}</strong>
+            {msg.text}
+            {msg.sender === "bot" && (
+              <button
+                className="ml-2 px-2 py-1 bg-blue-500 text-white text-sm rounded"
+                onClick={() => handleCopy(msg.text)}
+              >
+                Copy
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Input Section */}
+      <div className="flex items-center space-x-4">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type a prompt..."
+          className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-500 text-gray-800"
+        />
+        <button
+          onClick={handleSend}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Send
+        </button>
       </div>
     </div>
   );
