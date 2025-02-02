@@ -128,7 +128,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Home, Settings, Calendar, MessageCircle, LogOut, PlusCircle, Menu, X } from "lucide-react"
 import logoImage from "../pictures/logo.jpeg"
 
-const Sidebar = () => {
+const Dashboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true)
   const [userInfo, setUserInfo] = useState(null)
   const navigate = useNavigate()
@@ -138,13 +138,29 @@ const Sidebar = () => {
   }
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get('token')
+
+    if (token) {
+      // Store the token in localStorage
+      localStorage.setItem('authToken', token)
+    }
+
     const fetchUserData = async () => {
+      // Retrieve the token with the correct key 'authToken'
+      const token = localStorage.getItem('authToken')
+
+      if (!token) {
+        console.error('Token is not available in localStorage')
+        return
+      }
+
       try {
         const response = await fetch("https://smp-be-mysql.vercel.app/auth/user", {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,  // Use the 'authToken' key here
           },
         })
 
@@ -188,9 +204,8 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`bg-gray-200 shadow-lg transition-all duration-300 ease-in-out flex flex-col h-screen ${
-        isSidebarOpen ? "w-64" : "w-20"
-      }`}
+      className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col h-screen ${isSidebarOpen ? "w-64" : "w-20"
+        }`}
     >
       <div className={`flex flex-col ${isSidebarOpen ? "items-end" : "items-center"} p-4 border-b border-gray-200`}>
         {isSidebarOpen ? (
@@ -255,5 +270,5 @@ const Sidebar = () => {
   )
 }
 
-export default Sidebar
+export default Dashboard
 
