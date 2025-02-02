@@ -3,6 +3,7 @@ import React, { useState } from "react";
 const Chatbot = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
+  const [copyStatus, setCopyStatus] = useState(null); // Track copy status
   const API_URL = "https://smp-be-mysql.vercel.app/open-ai/generate-captions";
 
   const handleSend = async () => {
@@ -29,9 +30,14 @@ const Chatbot = () => {
     }
   };
 
-  const handleCopy = (text) => {
+  const handleCopy = (text, index) => {
     navigator.clipboard.writeText(text);
-    alert("Captions copied to clipboard!");
+    setCopyStatus(index);  // Set the copy status to the current message index
+
+    // Reset the copy status after 2 seconds
+    setTimeout(() => {
+      setCopyStatus(null);
+    }, 2000); // 2 seconds for the tick to appear
   };
 
   return (
@@ -47,9 +53,9 @@ const Chatbot = () => {
             {msg.sender === "bot" && (
               <button
                 className="ml-2 px-2 py-1 bg-blue-500 text-white text-sm rounded"
-                onClick={() => handleCopy(msg.text)}
+                onClick={() => handleCopy(msg.text, index)}
               >
-                Copy
+                {copyStatus === index ? "✔" : "Copy"}  {/* Change text to "✔" when copied */}
               </button>
             )}
           </div>
