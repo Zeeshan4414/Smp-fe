@@ -138,6 +138,13 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+
+    if (token) {
+      // Store the token in localStorage or sessionStorage
+      localStorage.setItem('authToken', token);
+    }
     const fetchUserData = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
