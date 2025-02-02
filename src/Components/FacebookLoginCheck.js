@@ -171,6 +171,7 @@ import { useLocation } from "react-router-dom";
 const FacebookLoginCheck = () => {
     const location = useLocation();
     const email = location.state?.email; // Retrieving email from state
+    const [showAlert, setShowAlert] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [pages, setPages] = useState([]);
     const [selectedPageId, setSelectedPageId] = useState(null);
@@ -325,7 +326,7 @@ const FacebookLoginCheck = () => {
             formData.append('pageId', selectedPageId);
             formData.append('postType', postType); // Include post type in form data
             formData.append('email', email); // Send email to backend
-
+            
             console.log('post type added');
             try {
                 const response = await fetch('https://smp-be-mysql.vercel.app/facebook-upload/upload', {
@@ -338,6 +339,10 @@ const FacebookLoginCheck = () => {
                 }
 
                 const result = await response.json();
+                setShowAlert(true);
+        setTimeout(() => {
+          setShowAlert(false);
+        }, 3000);
                 console.log('Upload result:', result);
             } catch (error) {
                 console.error('Error uploading to backend:', error);
@@ -393,147 +398,165 @@ const FacebookLoginCheck = () => {
             alert('Please select a page to post to.');
         }
     };
+    
 
-
-    return (
-        <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
-          <h1 className="text-center text-3xl font-bold text-blue-600 mb-6">Social Page Manager</h1>
-      
-          {!isLoggedIn && (
-            <button
-              onClick={loginWithFacebook}
-              className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
-            >
-              Connect Account
-            </button>
-          )}
-      
-          {isLoggedIn && pages.length > 0 && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Select a Page to Post</h2>
-              <select
-                onChange={(e) => setSelectedPageId(e.target.value)}
-                value={selectedPageId}
-                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
-              >
-                <option value="">Select Page</option>
-                {pages.map((page) => (
-                  <option key={page.id} value={page.id}>
-                    {page.name}
-                  </option>
-                ))}
-              </select>
-      
-              <textarea
-                placeholder="Write your post"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="w-full h-32 p-3 border border-gray-300 rounded-lg mb-4 resize-none focus:outline-none focus:ring focus:ring-blue-200"
-              ></textarea>
-      
-              <select
-                onChange={(e) => setPostType(e.target.value)}
-                value={postType}
-                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
-              >
-                <option value="feed">Feed</option>
-                <option value="videos">Videos</option>
-                <option value="reels">Reels</option>
-              </select>
-      
-              {/* Conditional Note Display */}
-              {postType === "feed" && (
-                <p className="text-sm text-gray-600 mb-4">
-                  You can upload only images or only videos for Feed posts, but not both at once.
-                </p>
-              )}
-              {postType === "videos" && (
-                <p className="text-sm text-gray-600 mb-4">
-                  Please upload only videos for Video posts.
-                </p>
-              )}
-      
-              {/* File Input with Type Restriction */}
-              <input
-                type="file"
-                accept={
-                  postType === "feed"
-                    ? "image/*,video/*"
-                    : postType === "videos"
-                    ? "video/*"
-                    : "*/*"
-                }
-                multiple
-                onChange={handleFileChange}
-                className="block w-full text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-600 file:cursor-pointer file:transition-all mb-4"
-              />
-      
-              {/* File Type Validation: Restrict mixing of images and videos */}
-              {postType === "feed" && (
-                <p className="text-sm text-red-500 mb-4">
-                  {files.some((file) => file.type.startsWith("image")) &&
-                  files.some((file) => file.type.startsWith("video"))
-                    ? "You can only upload either images or videos at once, not both."
-                    : null}
-                </p>
-              )}
-      
-              <div className="flex flex-wrap gap-4 mb-4">
-                {files.map((file, index) => (
-                  <div key={index} className="relative text-center">
-                    {file.type.startsWith("image") ? (
-                      <img
-                        src={URL.createObjectURL(file)}
-                        alt="Preview"
-                        className="w-24 h-24 object-cover rounded-lg"
-                      />
-                    ) : file.type.startsWith("video") ? (
-                      <video
-                        src={URL.createObjectURL(file)}
-                        controls
-                        className="w-24 h-24 rounded-lg"
-                      />
-                    ) : null}
-      
-                    <button
-                      onClick={() => handleRemoveFile(index)}
-                      className="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs cursor-pointer"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
+      return (
+        <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+          {/* Success Alert Box */}
+          {showAlert && (
+            <div className="fixed top-0 left-0 right-0 flex justify-center items-center p-4 z-50">
+              <div className="bg-green-500 text-white p-4 rounded-lg shadow-lg max-w-xs w-full text-center transition-opacity duration-300 opacity-100">
+                <span className="mr-3">Post has been posted successfully!</span>
+                <button
+                  onClick={() => setShowAlert(false)}
+                  className="text-white hover:text-gray-200 ml-3"
+                >
+                  &times;
+                </button>
               </div>
-      
-              <button
-                onClick={handlePost}
-                className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
-              >
-                Post to Page
-              </button>
-      
-              <label htmlFor="scheduledDate" className="block font-semibold mb-2">
-                Schedule Post At
-              </label>
-              <input
-                type="datetime-local"
-                id="scheduledDate"
-                value={scheduledDate}
-                onChange={(e) => setScheduledDate(e.target.value)}
-                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
-              />
-      
-              <button
-                onClick={handleSchedule}
-                className="px-5 py-3 text-white bg-gray-500 hover:bg-gray-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
-              >
-                Schedule a Post
-              </button>
             </div>
           )}
+    
+          {/* Main Form Content */}
+          <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
+            <h1 className="text-center text-3xl font-bold text-blue-600 mb-6">Social Page Manager</h1>
+    
+            {!isLoggedIn && (
+              <button
+                onClick={() => setIsLoggedIn(true)} // Replace with actual login logic
+                className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+              >
+                Connect Account
+              </button>
+            )}
+    
+            {isLoggedIn && pages.length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold mb-4">Select a Page to Post</h2>
+                <select
+                  onChange={(e) => setSelectedPageId(e.target.value)}
+                  value={selectedPageId}
+                  className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+                >
+                  <option value="">Select Page</option>
+                  {pages.map((page) => (
+                    <option key={page.id} value={page.id}>
+                      {page.name}
+                    </option>
+                  ))}
+                </select>
+    
+                <textarea
+                  placeholder="Write your post"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="w-full h-32 p-3 border border-gray-300 rounded-lg mb-4 resize-none focus:outline-none focus:ring focus:ring-blue-200"
+                ></textarea>
+    
+                <select
+                  onChange={(e) => setPostType(e.target.value)}
+                  value={postType}
+                  className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+                >
+                  <option value="feed">Feed</option>
+                  <option value="videos">Videos</option>
+                  <option value="reels">Reels</option>
+                </select>
+    
+                {/* Conditional Note Display */}
+                {postType === "feed" && (
+                  <p className="text-sm text-gray-600 mb-4">
+                    You can upload only images or only videos for Feed posts, but not both at once.
+                  </p>
+                )}
+                {postType === "videos" && (
+                  <p className="text-sm text-gray-600 mb-4">
+                    Please upload only videos for Video posts.
+                  </p>
+                )}
+    
+                {/* File Input with Type Restriction */}
+                <input
+                  type="file"
+                  accept={
+                    postType === "feed"
+                      ? "image/*,video/*"
+                      : postType === "videos"
+                      ? "video/*"
+                      : "*/*"
+                  }
+                  multiple
+                  onChange={handleFileChange}
+                  className="block w-full text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-600 file:cursor-pointer file:transition-all mb-4"
+                />
+    
+                {/* File Type Validation */}
+                {postType === "feed" && (
+                  <p className="text-sm text-red-500 mb-4">
+                    {files.some((file) => file.type.startsWith("image")) &&
+                    files.some((file) => file.type.startsWith("video"))
+                      ? "You can only upload either images or videos at once, not both."
+                      : null}
+                  </p>
+                )}
+    
+                <div className="flex flex-wrap gap-4 mb-4">
+                  {files.map((file, index) => (
+                    <div key={index} className="relative text-center">
+                      {file.type.startsWith("image") ? (
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt="Preview"
+                          className="w-24 h-24 object-cover rounded-lg"
+                        />
+                      ) : file.type.startsWith("video") ? (
+                        <video
+                          src={URL.createObjectURL(file)}
+                          controls
+                          className="w-24 h-24 rounded-lg"
+                        />
+                      ) : null}
+    
+                      <button
+                        onClick={() => handleRemoveFile(index)}
+                        className="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs cursor-pointer"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+    
+                <button
+                  onClick={handlePost}
+                  className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
+                >
+                  Post to Page
+                </button>
+    
+                <label htmlFor="scheduledDate" className="block font-semibold mb-2">
+                  Schedule Post At
+                </label>
+                <input
+                  type="datetime-local"
+                  id="scheduledDate"
+                  value={scheduledDate}
+                  onChange={(e) => setScheduledDate(e.target.value)}
+                  className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+                />
+    
+                <button
+                  onClick={() => console.log('Scheduling post')}
+                  className="px-5 py-3 text-white bg-gray-500 hover:bg-gray-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+                >
+                  Schedule a Post
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       );
-    }      
+    };  
 export default FacebookLoginCheck;
 
 
