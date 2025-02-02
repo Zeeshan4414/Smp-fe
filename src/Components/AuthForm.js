@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
 
 
-const AuthForm = ({ onClose, isSignUp: initialSignUp, setIsLoggedIn }) => {
+const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp, setIsLoggedIn }) => {
   const [isSignUp, setIsSignUp] = useState(initialSignUp);
   const [isResetPassword, setIsResetPassword] = useState(false);
   const [name, setName] = useState('');
