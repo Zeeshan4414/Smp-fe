@@ -139,6 +139,11 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('Token is not available in localStorage');
+        return;
+      }
 
       try {
         const response = await fetch("https://smp-be-mysql.vercel.app/auth/user", {
