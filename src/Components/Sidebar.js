@@ -139,12 +139,13 @@ const Sidebar = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
+
       try {
         const response = await fetch("https://smp-be-mysql.vercel.app/auth/user", {
           method: "GET",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         })
 
@@ -187,9 +188,8 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col h-screen ${
-        isSidebarOpen ? "w-64" : "w-20"
-      }`}
+      className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col h-screen ${isSidebarOpen ? "w-64" : "w-20"
+        }`}
     >
       <div className={`flex flex-col ${isSidebarOpen ? "items-end" : "items-center"} p-4 border-b border-gray-200`}>
         {isSidebarOpen ? (
