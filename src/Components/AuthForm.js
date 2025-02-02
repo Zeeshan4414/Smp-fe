@@ -11,7 +11,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,7 +26,8 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
     e.preventDefault();
     setError('');
     setMessage('');
-    setIsLoading(true);  // Show loading while processing
+    setIsLoading(true); // Show loading while processing
+
     if (isForgotPassword) {
       // Forgot Password Request
       try {
@@ -37,23 +38,25 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
       } catch (err) {
         setError(err.response?.data?.msg || "Something went wrong.");
       }
+      setIsLoading(false); // Hide loading after processing
       return;
     }
-    try {
-      let url;
 
-      // Sign up or sign in logic
-      url = isSignUp
+    try {
+      let url = isSignUp
         ? 'https://smp-be-mysql.vercel.app/auth/signup' // Updated URL for signup
         : 'https://smp-be-mysql.vercel.app/auth/signin'; // Updated URL for signin
+
       const payload = { name, email, password };
       const response = await axios.post(url, payload);
-      localStorage.setItem('authToken', response.data.token);
-      setIsLoggedIn(true);
-      navigate('/dashboard');
 
-      if (typeof onClose === 'function') {
-        onClose();
+      if (response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+        setIsLoggedIn(true);
+        navigate('/dashboard');
+        if (typeof onClose === 'function') {
+          onClose();
+        }
       }
     } catch (error) {
       console.error('Authentication error:', error);
@@ -203,7 +206,6 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
                           Close
                         </button>
                       </div>
-
                     </form>
                   </div>
                 </div>
