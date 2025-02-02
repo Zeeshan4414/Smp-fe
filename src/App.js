@@ -16,6 +16,7 @@ import Sidebar from './Components/Sidebar';
 import Loader from './Components/Loader';
 import CreatePost from './Components/CreatePost';
 import ForgetPasswordPage from './Components/forgetPassword';
+import ResetPasswordPage from './Components/resetPassword';
 
 
 
@@ -132,6 +133,7 @@ const AppContent = () => {
         />
         <Route path="/auth" element={<AuthForm />} />
         <Route path="/forget-password" element={<ForgetPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route
           path="/data-deletion"
           element={
