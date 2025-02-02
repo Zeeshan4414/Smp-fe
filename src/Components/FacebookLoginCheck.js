@@ -396,158 +396,114 @@ const FacebookLoginCheck = () => {
 
 
     return (
-        <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '600px', margin: 'auto' }}>
-            <h1 style={{ textAlign: 'center', color: '#4267B2' }}>Social Page Manager</h1>
-
-            {!isLoggedIn && (
-                <button
-                    onClick={loginWithFacebook}
-                    style={{
-                        padding: '10px 20px',
-                        fontSize: '16px',
-                        backgroundColor: '#4267B2',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                    }}>
-                    Connect Account
-                </button>
-            )}
-
-            {isLoggedIn && pages.length > 0 && (
-                <div>
-                    <h2>Select a Page to Post</h2>
-                    <select
-                        onChange={(e) => setSelectedPageId(e.target.value)}
-                        value={selectedPageId}
-                        style={{
-                            padding: '10px',
-                            fontSize: '14px',
-                            marginBottom: '10px',
-                            width: '100%',
-                        }}
-                    >
-                        <option value="">Select Page</option>
-                        {pages.map((page) => (
-                            <option key={page.id} value={page.id}>
-                                {page.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <textarea
-                        placeholder="Write your post"
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        style={{
-                            width: '100%',
-                            height: '100px',
-                            padding: '10px',
-                            marginBottom: '10px',
-                        }}
-                    ></textarea>
-
-                    <select
-                        onChange={(e) => setPostType(e.target.value)}
-                        value={postType}
-                        style={{
-                            padding: '10px',
-                            fontSize: '14px',
-                            marginBottom: '10px',
-                            width: '100%',
-                        }}
-                    >
-                        <option value="feed">Feed</option>
-                        <option value="videos">Videos</option>
-                        <option value="reels">Reels</option>
-                    </select>
-
-                    <input
-                        type="file"
-                        accept="image/*,video/*"
-                        multiple
-                        onChange={handleFileChange}
-                        style={{ marginBottom: '10px' }}
-                    />
-
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '10px' }}>
-                        {files.map((file, index) => (
-                            <div key={index} style={{ textAlign: 'center', position: 'relative' }}>
-                                {file.type.startsWith('image') ? (
-                                    <img
-                                        src={URL.createObjectURL(file)}
-                                        alt="Preview"
-                                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                                    />
-                                ) : (
-                                    <video
-                                        src={URL.createObjectURL(file)}
-                                        controls
-                                        style={{ width: '100px', height: '100px' }}
-                                    />
-                                )}
-                                <button
-                                    onClick={() => handleRemoveFile(index)}
-                                    style={{
-                                        position: 'absolute',
-                                        top: '5px',
-                                        right: '5px',
-                                        backgroundColor: 'red',
-                                        color: 'white',
-                                        border: 'none',
-                                        borderRadius: '50%',
-                                        width: '20px',
-                                        height: '20px',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    X
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-
+        <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-gray-200 shadow-lg rounded-lg">
+          <h1 className="text-center text-3xl font-bold text-blue-600 mb-6">Social Page Manager</h1>
+      
+          {!isLoggedIn && (
+            <button
+              onClick={loginWithFacebook}
+              className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+            >
+              Connect Account
+            </button>
+          )}
+      
+          {isLoggedIn && pages.length > 0 && (
+            <div>
+              <h2 className="text-xl font-semibold mb-4">Select a Page to Post</h2>
+              <select
+                onChange={(e) => setSelectedPageId(e.target.value)}
+                value={selectedPageId}
+                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+              >
+                <option value="">Select Page</option>
+                {pages.map((page) => (
+                  <option key={page.id} value={page.id}>
+                    {page.name}
+                  </option>
+                ))}
+              </select>
+      
+              <textarea
+                placeholder="Write your post"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full h-32 p-3 border border-gray-300 rounded-lg mb-4 resize-none focus:outline-none focus:ring focus:ring-blue-200"
+              ></textarea>
+      
+              <select
+                onChange={(e) => setPostType(e.target.value)}
+                value={postType}
+                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+              >
+                <option value="feed">Feed</option>
+                <option value="videos">Videos</option>
+                <option value="reels">Reels</option>
+              </select>
+      
+              <input
+                type="file"
+                accept="image/*,video/*"
+                multiple
+                onChange={handleFileChange}
+                className="block w-full text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-600 file:cursor-pointer file:transition-all mb-4"
+              />
+      
+              <div className="flex flex-wrap gap-4 mb-4">
+                {files.map((file, index) => (
+                  <div key={index} className="relative text-center">
+                    {file.type.startsWith('image') ? (
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="Preview"
+                        className="w-24 h-24 object-cover rounded-lg"
+                      />
+                    ) : (
+                      <video
+                        src={URL.createObjectURL(file)}
+                        controls
+                        className="w-24 h-24 rounded-lg"
+                      />
+                    )}
                     <button
-                        onClick={handlePost}
-                        style={{
-                            padding: '10px 20px',
-                            fontSize: '16px',
-                            backgroundColor: '#28a745',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                        }}
+                      onClick={() => handleRemoveFile(index)}
+                      className="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs cursor-pointer"
                     >
-                        Post to Page
+                      ✕
                     </button>
-                    <label htmlFor="scheduledDate">Schedule Post At</label>
-                    <input
-                        type="datetime-local"
-                        id="scheduledDate"
-                        value={scheduledDate}
-                        onChange={(e) => setScheduledDate(e.target.value)}
-                    />
-                    <button
-                        onClick={handleSchedule}
-                        style={{
-                            padding: '10px 20px',
-                            fontSize: '16px',
-                            backgroundColor: '#28a745',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '5px',
-                            cursor: 'pointer',
-                        }}
-                    >
-                        Schedule a Post
-                    </button>
-                </div>
-            )}
+                  </div>
+                ))}
+              </div>
+      
+              <button
+                onClick={handlePost}
+                className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-full text-lg font-medium transition-all mb-4"
+              >
+                Post to Page
+              </button>
+      
+              <label htmlFor="scheduledDate" className="block font-semibold mb-2">
+                Schedule Post At
+              </label>
+              <input
+                type="datetime-local"
+                id="scheduledDate"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+              />
+      
+              <button
+                onClick={handleSchedule}
+                className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-full text-lg font-medium transition-all"
+              >
+                Schedule a Post
+              </button>
+            </div>
+          )}
         </div>
-    );
-};
+      );
+    }      
 
 export default FacebookLoginCheck;
 
