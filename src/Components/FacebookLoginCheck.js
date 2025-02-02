@@ -396,13 +396,13 @@ const FacebookLoginCheck = () => {
 
 
     return (
-        <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-gray-200 shadow-lg rounded-lg">
+        <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
           <h1 className="text-center text-3xl font-bold text-blue-600 mb-6">Social Page Manager</h1>
       
           {!isLoggedIn && (
             <button
               onClick={loginWithFacebook}
-              className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+              className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-full text-lg font-medium transition-all"
             >
               Connect Account
             </button>
@@ -441,9 +441,22 @@ const FacebookLoginCheck = () => {
                 <option value="reels">Reels</option>
               </select>
       
+              {/* Conditional Note Display */}
+              {postType === "feed" && (
+                <p className="text-sm text-gray-600 mb-4">
+                  Please upload only images for Feed posts.
+                </p>
+              )}
+              {postType === "videos" && (
+                <p className="text-sm text-gray-600 mb-4">
+                  Please upload only videos for Video posts.
+                </p>
+              )}
+      
+              {/* File Input with Type Restriction */}
               <input
                 type="file"
-                accept="image/*,video/*"
+                accept={postType === "feed" ? "image/*" : postType === "videos" ? "video/*" : "*/*"}
                 multiple
                 onChange={handleFileChange}
                 className="block w-full text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-600 file:cursor-pointer file:transition-all mb-4"
@@ -452,19 +465,20 @@ const FacebookLoginCheck = () => {
               <div className="flex flex-wrap gap-4 mb-4">
                 {files.map((file, index) => (
                   <div key={index} className="relative text-center">
-                    {file.type.startsWith('image') ? (
+                    {file.type.startsWith("image") ? (
                       <img
                         src={URL.createObjectURL(file)}
                         alt="Preview"
                         className="w-24 h-24 object-cover rounded-lg"
                       />
-                    ) : (
+                    ) : file.type.startsWith("video") ? (
                       <video
                         src={URL.createObjectURL(file)}
                         controls
                         className="w-24 h-24 rounded-lg"
                       />
-                    )}
+                    ) : null}
+      
                     <button
                       onClick={() => handleRemoveFile(index)}
                       className="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs cursor-pointer"
@@ -477,7 +491,7 @@ const FacebookLoginCheck = () => {
       
               <button
                 onClick={handlePost}
-                className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-full text-lg font-medium transition-all mb-4"
+                className="px-5 py-3 text-white bg-blue-500 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
               >
                 Post to Page
               </button>
@@ -495,7 +509,7 @@ const FacebookLoginCheck = () => {
       
               <button
                 onClick={handleSchedule}
-                className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-full text-lg font-medium transition-all"
+                className="px-5 py-3 text-white bg-gray-500 hover:bg-gray-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
               >
                 Schedule a Post
               </button>
