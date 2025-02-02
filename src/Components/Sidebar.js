@@ -127,6 +127,8 @@ import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Home, Settings, Calendar, MessageCircle, LogOut, PlusCircle, Menu, X } from "lucide-react"
 import logoImage from "../pictures/logo.jpeg"
+import FacebookLoginCheck from "./FacebookLoginCheck"
+
 
 const Dashboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true)
@@ -266,6 +268,9 @@ const Dashboard = () => {
         <LogOut size={20} className="mr-4" />
         <span className={`${!isSidebarOpen ? "hidden" : ""} transition-opacity duration-300`}>Logout</span>
       </button>
+
+      {userInfo && <FacebookLoginCheck email={userInfo.email} />}
+
     </div>
   )
 }
