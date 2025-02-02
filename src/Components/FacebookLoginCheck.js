@@ -178,6 +178,7 @@ const FacebookLoginCheck = ({ email }) => {
     const [scheduledDate, setScheduledDate] = useState(''); // State for scheduled date
 
     const statusChangeCallback = useCallback((response) => {
+        console.log("i am here");
         if (response.status === 'connected') {
             setIsLoggedIn(true);
             fetchUserData(response.authResponse.userID);
