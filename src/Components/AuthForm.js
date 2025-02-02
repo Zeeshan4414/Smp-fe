@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
 
 
-const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp, setIsLoggedIn }) => {
+const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsLoggedIn = () => { } }) => {
   const [isSignUp, setIsSignUp] = useState(initialSignUp);
   const [isResetPassword, setIsResetPassword] = useState(false);
   const [name, setName] = useState('');
@@ -26,6 +26,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp, setIsLoggedIn 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);  // Show loading while processing
     try {
       let url;
       let method = 'POST'; // Default method
@@ -54,26 +55,20 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp, setIsLoggedIn 
         setIsLoggedIn(true);
         navigate('/dashboard');
       }
-      setIsLoading(false);
       if (typeof onClose === 'function') {
         onClose();
       }
     } catch (error) {
-      setIsLoading(false);
       console.error('Authentication error:', error);
-
       if (error.response) {
-        console.error('Error response data:', error.response.data);
-        console.error('Error response status:', error.response.status);
-        console.error('Error response headers:', error.response.headers);
-        setError(error.response.data.msg || 'Error during authentication');
+        setError(error.response.data.msg || 'Authentication failed.');
       } else if (error.request) {
-        console.error('Error request:', error.request);
-        setError('No response received from server');
+        setError('No response from the server.');
       } else {
-        console.error('Error message:', error.message);
-        setError('Error during authentication');
+        setError('An unexpected error occurred.');
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
