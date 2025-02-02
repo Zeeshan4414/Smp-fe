@@ -15,6 +15,7 @@ import Chatbot from './Components/chatbot';
 import Sidebar from './Components/Sidebar';
 import Loader from './Components/Loader';
 import CreatePost from './Components/CreatePost';
+import ForgetPasswordPage from './Components/forgetPassword';
 
 
 
@@ -130,6 +131,7 @@ const AppContent = () => {
           }
         />
         <Route path="/auth" element={<AuthForm />} />
+        <Route path="/forget-password" element={<ForgetPasswordPage />} />
         <Route
           path="/data-deletion"
           element={
