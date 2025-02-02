@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { } from 'react';
+=======
+import React from 'react';
+>>>>>>> 1d09f1398c5a9b6cae107232d3e100cb2f2b62e8
 import FacebookLoginCheck from './FacebookLoginCheck';
 // import './CreatePost.css';
 

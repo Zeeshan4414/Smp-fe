@@ -342,7 +342,7 @@
 
 // export default Dashboard
 
-import FacebookLoginCheck from "./FacebookLoginCheck"
+
 const placeholderData = [
   {
     id: 1,
