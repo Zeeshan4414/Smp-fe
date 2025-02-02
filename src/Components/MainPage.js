@@ -76,7 +76,7 @@ const CustomButton = ({ children, onClick, className }) => (
 )
 const FeatureCard = ({ title, description, image, delay }) => {
   const props = useSpring({
-    from: { opacity: 0, transform: "translateY(50px)" },
+    from: { opacity: 0, transform: "translateY(80px)" },
     to: { opacity: 1, transform: "translateY(0)" },
     delay,
   })
@@ -166,22 +166,22 @@ console.log(isLoading);
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-12 animate-fade-in-down">
             Powerful Features for Social Media Success
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            <FeatureCard
+          <div className=" text-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 cursor-pointer">
+            <FeatureCard 
               title="Schedule Posts Ahead of Time"
               description="Plan and schedule your social media posts in advance. Ensure your content reaches your audience at the optimal times, even when you're not online."
               image={f1Image}
               delay={200}
             />
             <FeatureCard
-              title="Track Your Engagement"
-              description="Get detailed analytics on your social media performance. Monitor likes, shares, comments, and more to understand what works best for your audience."
+              title="Track Your Analytic"
+              description="Get detailed analytics on your social media performance. Monitor posts, Scheduled Posts, Total posts and more to understand what works best for your audience."
               image={f2Image}
               delay={400}
             />
             <FeatureCard
-              title="Manage Multiple Accounts"
-              description="Easily manage and switch between multiple social media accounts from one platform. Streamline your workflow and save time."
+              title="AI Generated Captions"
+              description="AI-powered captions instantly for your social media posts. Effortlessly enhance your content with engaging text , boosting your social media presence in no time."
               image={f3Image}
               delay={600}
             />
@@ -224,7 +224,7 @@ console.log(isLoading);
           </p>
           <CustomButton className="animate-pulse">
             <Link to="/signup" className="flex items-center">
-              Start Your Free Trial
+            Empower Your Presence
               <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </CustomButton>

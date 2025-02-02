@@ -241,7 +241,6 @@
 // export default ScheduledPosts;
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './ScheduledPosts.css';
 
 
 const ScheduledPosts = () => {
@@ -364,69 +363,104 @@ const ScheduledPosts = () => {
     };
 
     return (
-        <div>
-            <h1>Scheduled Posts</h1>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Caption</th>
-                        <th>Scheduled Date</th>
-                        <th>Status</th>
-                        <th>Post Type</th>
-                        <th>Time Left</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {posts.map(post => (
-                        <tr key={post.id}>
-                            <td>{post.caption}</td>
-                            <td>{post.scheduledDate}</td>
-                            <td>{post.isScheduled ? 'Scheduled' : 'Published'}</td>
-                            <td>{post.postType}</td>
-                            <td>{post.isScheduled ? calculateTimeLeft(post.scheduledDate) : 'Post is published'}</td>
-                            <td>
-                                {post.isScheduled && (
-                                    <button onClick={() => handleUpdate(post.id, post.caption, post.postType, post.files || [], post.scheduledDate, 'scheduled')}>Update</button>
-                                )}
-                                <button onClick={() => handleDelete(post.id)}>Delete</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
+        <div className="p-8 bg-gray-100 min-h-screen">
+          {/* Page Title */}
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Scheduled Posts</h1>
+          
+          {/* Table Container */}
+          <div className="overflow-x-auto bg-white shadow-lg rounded-lg">
+            <table className="min-w-full table-auto">
+              <thead className="bg-sky-200">
+                <tr>
+                  <th className="py-3 px-6 text-left text-md font-bold text-gray-600">Caption</th>
+                  <th className="py-3 px-6 text-left text-md font-bold text-gray-600">Scheduled Date</th>
+                  <th className="py-3 px-6 text-left text-md font-bold text-gray-600">Status</th>
+                  <th className="py-3 px-6 text-left text-md font-bold text-gray-600">Post Type</th>
+                  <th className="py-3 px-6 text-left text-md font-bold text-gray-600">Time Left</th>
+                  <th className="py-3 px-6 text-left text-md font-bold text-gray-600">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="bg-sky-100">
+                {posts.map((post) => (
+                  <tr key={post.id} className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-6 text-sm text-gray-700">{post.caption}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{post.scheduledDate}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{post.isScheduled ? 'Scheduled' : 'Published'}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">{post.postType}</td>
+                    <td className="py-3 px-6 text-sm text-gray-700">
+                      {post.isScheduled ? calculateTimeLeft(post.scheduledDate) : 'Post is published'}
+                    </td>
+                    <td className="py-3 px-6 text-sm">
+                      {post.isScheduled && (
+                        <button
+                          onClick={() =>
+                            handleUpdate(post.id, post.caption, post.postType, post.files || [], post.scheduledDate, 'scheduled')
+                          }
+                          className="text-blue-500 hover:text-blue-700 transition duration-300 mr-3"
+                        >
+                          Update
+                        </button>
+                      )}
+                      <button
+                        onClick={() => handleDelete(post.id)}
+                        className="text-red-500 hover:text-red-700 transition duration-300"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
             </table>
-
-            {/* Update Modal */}
-            {showUpdateModal && (
-                <div className="update-modal">
-                    <h2>Edit</h2>
-                    <form onSubmit={handleSubmitUpdate}>
-                        <div>
-                            <label>Caption:</label>
-                            <input
-                                type="text"
-                                name="caption"
-                                value={postData.caption}
-                                onChange={handleChange}
-                            />
-                        </div>
-                        <div>
-                            <label>Scheduled Date:</label>
-                            <input
-                                type="datetime-local"
-                                name="scheduledDate"
-                                value={postData.scheduledDate}
-                                onChange={handleScheduledDateChange}
-                            />
-                        </div>
-
-                        <button type="submit">Update Post</button>
-                    </form>
-                    <button onClick={() => setShowUpdateModal(false)}>Close</button>
-                </div>
-            )}
+          </div>
+      
+          {/* Update Modal */}
+          {showUpdateModal && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Post</h2>
+                <form onSubmit={handleSubmitUpdate} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Caption:</label>
+                    <input
+                      type="text"
+                      name="caption"
+                      value={postData.caption}
+                      onChange={handleChange}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Scheduled Date:</label>
+                    <input
+                      type="datetime-local"
+                      name="scheduledDate"
+                      value={postData.scheduledDate}
+                      onChange={handleScheduledDateChange}
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      type="submit"
+                      className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300"
+                    >
+                      Update Post
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowUpdateModal(false)}
+                      className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400 transition duration-300"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
         </div>
-    );
-};
+      );
+    }      
 
 export default ScheduledPosts;

@@ -343,7 +343,26 @@
 // export default Dashboard
 
 import FacebookLoginCheck from "./FacebookLoginCheck"
-
+const placeholderData = [
+  {
+    id: 1,
+    title: "Upcoming Feature Release",
+    content: "Our team is working on new scheduling features for social media management.",
+    timestamp: "Posted on Jan 10, 2025",
+  },
+  {
+    id: 2,
+    title: "Maintenance Update",
+    content: "System maintenance is scheduled for February 15 from 1 AM to 4 AM UTC.",
+    timestamp: "Posted on Jan 5, 2025",
+  },
+  {
+    id: 3,
+    title: "Tips for Engagement",
+    content: "Learn how to increase post engagement with AI-generated captions.",
+    timestamp: "Posted on Dec 30, 2024",
+  },
+];
 const Dashboard = () => {
   return (
     <>
@@ -367,11 +386,23 @@ const Dashboard = () => {
         </div>
 
         {/* Separate Create Post Section */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Create a Post</h2>
-          <FacebookLoginCheck />
-        </div>
+        
       </main>
+      <section className="bg-white p-6 shadow-md rounded-lg mb-6">
+          <h2 className="text-xl font-semibold text-gray-800 mb-4">Latest Announcements</h2>
+          <div className="space-y-4">
+            {placeholderData.map((item) => (
+              <div
+                key={item.id}
+                className="bg-gray-50 p-4 rounded-lg shadow hover:bg-gray-100 transition duration-300"
+              >
+                <h3 className="text-lg font-medium text-gray-700">{item.title}</h3>
+                <p className="text-gray-600">{item.content}</p>
+                <p className="text-sm text-gray-500 mt-2">{item.timestamp}</p>
+              </div>
+            ))}
+          </div>
+        </section>
     </>
   )
 }

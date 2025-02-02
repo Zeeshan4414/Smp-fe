@@ -194,11 +194,12 @@ const Dashboard = () => {
 
   const sidebarItems = [
     { name: "Dashboard", icon: Home, link: "/dashboard" },
-    { name: "Settings", icon: Settings, link: "/settings" },
+    { name: "Create Post", icon: PlusCircle, link: "/create-post" },
     { name: "Total Posts", icon: Calendar, link: "/posts" },
     { name: "Scheduled Posts", icon: Calendar, link: "/sch-posts" },
     { name: "Chatbot", icon: MessageCircle, link: "/chatbot" },
-    { name: "Create Post", icon: PlusCircle, link: "/create-post" },
+    { name: "Settings", icon: Settings, link: "/settings" },
+
   ]
 
   return (
