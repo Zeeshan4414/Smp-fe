@@ -14,6 +14,7 @@ import ScheduledPosts from './Components/ScheduledPosts';
 import Chatbot from './Components/chatbot';
 import Sidebar from './Components/Sidebar';
 import Loader from './Components/Loader';
+import CreatePost from './Components/CreatePost';
 
 
 
@@ -183,6 +184,14 @@ const AppContent = () => {
           element={
             <DashboardLayout>
               <Chatbot />
+            </DashboardLayout>
+          }
+        />
+        <Route
+          path="/create-post"
+          element={
+            <DashboardLayout>
+              <CreatePost />
             </DashboardLayout>
           }
         />

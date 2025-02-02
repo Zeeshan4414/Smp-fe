@@ -178,16 +178,17 @@ const Sidebar = () => {
 
   const sidebarItems = [
     { name: "Dashboard", icon: Home, link: "/dashboard" },
-    { name: "Settings", icon: Settings, link: "/settings" },
+    { name: "Create Post", icon: PlusCircle, link: "/create-post" },
     { name: "Total Posts", icon: Calendar, link: "/posts" },
     { name: "Scheduled Posts", icon: Calendar, link: "/sch-posts" },
     { name: "Chatbot", icon: MessageCircle, link: "/chatbot" },
-    { name: "Create Post", icon: PlusCircle, link: "/create-post" },
+    { name: "Settings", icon: Settings, link: "/settings" },
+
   ]
 
   return (
     <div
-      className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col h-screen ${
+      className={`bg-gray-200 shadow-lg transition-all duration-300 ease-in-out flex flex-col h-screen ${
         isSidebarOpen ? "w-64" : "w-20"
       }`}
     >
