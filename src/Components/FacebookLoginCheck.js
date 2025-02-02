@@ -166,8 +166,11 @@
 
 // _______________________________________________________________________________________________________________________________
 import React, { useState, useEffect, useCallback } from 'react';
+import { useLocation } from "react-router-dom";
 
-const FacebookLoginCheck = ({ email }) => {
+const FacebookLoginCheck = () => {
+    const location = useLocation();
+    const email = location.state?.email; // Retrieving email from state
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [pages, setPages] = useState([]);
     const [selectedPageId, setSelectedPageId] = useState(null);
