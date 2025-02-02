@@ -402,7 +402,7 @@ const FacebookLoginCheck = () => {
           {!isLoggedIn && (
             <button
               onClick={loginWithFacebook}
-              className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-full text-lg font-medium transition-all"
+              className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
             >
               Connect Account
             </button>
@@ -444,7 +444,7 @@ const FacebookLoginCheck = () => {
               {/* Conditional Note Display */}
               {postType === "feed" && (
                 <p className="text-sm text-gray-600 mb-4">
-                  Please upload only images for Feed posts.
+                  You can upload only images or only videos for Feed posts, but not both at once.
                 </p>
               )}
               {postType === "videos" && (
@@ -456,11 +456,27 @@ const FacebookLoginCheck = () => {
               {/* File Input with Type Restriction */}
               <input
                 type="file"
-                accept={postType === "feed" ? "image/*" : postType === "videos" ? "video/*" : "*/*"}
+                accept={
+                  postType === "feed"
+                    ? "image/*,video/*"
+                    : postType === "videos"
+                    ? "video/*"
+                    : "*/*"
+                }
                 multiple
                 onChange={handleFileChange}
                 className="block w-full text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-600 file:cursor-pointer file:transition-all mb-4"
               />
+      
+              {/* File Type Validation: Restrict mixing of images and videos */}
+              {postType === "feed" && (
+                <p className="text-sm text-red-500 mb-4">
+                  {files.some((file) => file.type.startsWith("image")) &&
+                  files.some((file) => file.type.startsWith("video"))
+                    ? "You can only upload either images or videos at once, not both."
+                    : null}
+                </p>
+              )}
       
               <div className="flex flex-wrap gap-4 mb-4">
                 {files.map((file, index) => (
@@ -491,7 +507,7 @@ const FacebookLoginCheck = () => {
       
               <button
                 onClick={handlePost}
-                className="px-5 py-3 text-white bg-blue-500 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
+                className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
               >
                 Post to Page
               </button>
@@ -518,7 +534,6 @@ const FacebookLoginCheck = () => {
         </div>
       );
     }      
-
 export default FacebookLoginCheck;
 
 
