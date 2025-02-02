@@ -25,9 +25,10 @@ const Settings = () => {
   };
 
   const handleDeleteAccount = async () => {
+    const token = localStorage.getItem('authToken')
     try {
       const response = await axios.delete(`${baseURL}/auth/delete`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${token}` }
       });
       console.log(response.data);
       alert('Account deleted successfully!');
