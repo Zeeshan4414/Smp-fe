@@ -127,7 +127,6 @@ import { useState, useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { Home, Settings, Calendar, MessageCircle, LogOut, PlusCircle, Menu, X } from "lucide-react"
 import logoImage from "../pictures/logo.jpeg"
-import FacebookLoginCheck from "./FacebookLoginCheck"
 
 
 const Dashboard = () => {
@@ -138,7 +137,6 @@ const Dashboard = () => {
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen)
   }
-
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
     const token = urlParams.get('token')
@@ -203,6 +201,9 @@ const Dashboard = () => {
     { name: "Settings", icon: Settings, link: "/settings" },
 
   ]
+  const handleClick = (link) => {
+    navigate(link, { state: { email: userInfo.email } }); // Passing email as state
+  };
 
   return (
     <div
@@ -252,7 +253,7 @@ const Dashboard = () => {
         {sidebarItems.map((item, index) => (
           <Link
             key={index}
-            to={item.link}
+            onClick={() => handleClick(item.link)}
             className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
           >
             <item.icon size={20} className="mr-4" />
@@ -269,7 +270,6 @@ const Dashboard = () => {
         <span className={`${!isSidebarOpen ? "hidden" : ""} transition-opacity duration-300`}>Logout</span>
       </button>
 
-      {userInfo && <FacebookLoginCheck email={userInfo.email} />}
 
     </div>
   )
