@@ -5,6 +5,8 @@ import Loader from './Loader';
 
 
 const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsLoggedIn = () => { } }) => {
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [message, setMessage] = useState("");
   const [isSignUp, setIsSignUp] = useState(initialSignUp);
   const [isResetPassword, setIsResetPassword] = useState(false);
   const [name, setName] = useState('');
@@ -26,7 +28,20 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setMessage("");
     setIsLoading(true);  // Show loading while processing
+    if (isForgotPassword) {
+      // Forgot Password Request
+      try {
+        const response = await axios.post("https://smp-be-mysql.vercel.app/auth/forgot-password", { email });
+        setMessage(response.data.msg || "A reset link has been sent to your email.");
+        setIsForgotPassword(false); // Hide the form after submission
+        setEmail("");
+      } catch (err) {
+        setError(err.response?.data?.msg || "Something went wrong.");
+      }
+      return;
+    }
     try {
       let url;
       let method = 'POST'; // Default method
@@ -51,7 +66,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
           : 'https://smp-be-mysql.vercel.app/auth/signin'; // Updated URL for signin
         const payload = { name, email, password };
         const response = await axios.post(url, payload);
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('authToken', response.data.token);
         setIsLoggedIn(true);
         navigate('/dashboard');
       }
@@ -154,121 +169,148 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   // export default AuthForm;
 
   return (
-    <>
-      {isLoading && (
-        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-gray-500/50 rounded-lg z-10">
-          <Loader />
-        </div>
+    <div className="form-container">
+      <h2>{isForgotPassword ? 'Forgot Password' : isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+      {message ? (
+        <p className="success-message">{message}</p> // Display success message
+      ) : (
+        <form onSubmit={handleSubmit} className="auth-form">
+          {error && <p className="error-message">{error}</p>}
+
+          {isForgotPassword ? (
+            <>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="input-field"
+              />
+              <button type="submit" className="submit-btn">
+                Send Reset Link
+              </button>
+              <button type="button" onClick={() => setIsForgotPassword(false)} className="toggle-btn">
+                Back to Sign In
+              </button>
+            </>
+          ) : (
+            <>
+              {isLoading && (
+                <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-gray-500/50 rounded-lg z-10">
+                  <Loader />
+                </div>
+              )}
+              <div className="flex items-center justify-center min-h-screen bg-gray-300">
+                <div className="w-full max-w-md">
+                  <div className={`${isLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity`}>
+                    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+                      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+                        {isResetPassword ? "Reset Password" : isSignUp ? "Sign Up" : "Sign In"}
+                      </h2>
+
+                      {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
+
+                      {!isResetPassword && isSignUp && (
+                        <div className="mb-4">
+                          <input
+                            type="text"
+                            placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          />
+                        </div>
+                      )}
+
+                      <div className="mb-4">
+                        <input
+                          type="email"
+                          placeholder="Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
+                      </div>
+
+                      {!isResetPassword && (
+                        <div className="mb-6">
+                          <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                          />
+                        </div>
+                      )}
+
+                      {isResetPassword && (
+                        <div className="mb-6">
+                          <input
+                            type="password"
+                            placeholder="New Password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            required
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                          />
+                        </div>
+                      )}
+
+                      <div className="flex items-center justify-between mb-6">
+                        <button
+                          type="submit"
+                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                        >
+                          {isResetPassword ? "Reset Password" : isSignUp ? "Sign Up" : "Sign In"}
+                        </button>
+                      </div>
+
+                      {!isResetPassword && (
+                        <div className="flex flex-col space-y-4">
+                          <button type="button" onClick={toggleForm} className="text-sm text-blue-500 hover:text-blue-800">
+                            {isSignUp ? "Already have an account? Sign In" : "New here? Sign Up"}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleForgotPassword}
+                            className="text-sm text-blue-500 hover:text-blue-800"
+                          >
+                            Forgot Password?
+                          </button>
+                        </div>
+                      )}
+
+                      <div className="mt-6">
+                        <button
+                          type="button"
+                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                          onClick={handleGoogleSignIn}
+                        >
+                          Continue with Google
+                        </button>
+                      </div>
+
+                      <div className="mt-6 text-center">
+                        <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick={onClose}>
+                          Close
+                        </button>
+                      </div>
+
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </form>
       )}
-      <div className="flex items-center justify-center min-h-screen bg-gray-300">
-        <div className="w-full max-w-md">
-          <div className={`${isLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity`}>
-            <form onSubmit={handleSubmit} className=" bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-              <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-                {isResetPassword ? "Reset Password" : isSignUp ? "Sign Up" : "Sign In"}
-              </h2>
-
-              {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
-
-
-
-              {!isResetPassword && isSignUp && (
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-              )}
-
-              <div className="mb-4">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div>
-
-              {!isResetPassword && (
-                <div className="mb-6">
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-              )}
-
-              {isResetPassword && (
-                <div className="mb-6">
-                  <input
-                    type="password"
-                    placeholder="New Password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    required
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                  />
-                </div>
-              )}
-
-              <div className="flex items-center justify-between mb-6">
-                <button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                >
-                  {isResetPassword ? "Reset Password" : isSignUp ? "Sign Up" : "Sign In"}
-                </button>
-              </div>
-
-              {!isResetPassword && (
-                <div className="flex flex-col space-y-4">
-                  <button type="button" onClick={toggleForm} className="text-sm text-blue-500 hover:text-blue-800">
-                    {isSignUp ? "Already have an account? Sign In" : "New here? Sign Up"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleForgotPassword}
-                    className="text-sm text-blue-500 hover:text-blue-800"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
-              )}
-
-              <div className="mt-6">
-                <button
-                  type="button"
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                  onClick={handleGoogleSignIn}
-                >
-                  Continue with Google
-                </button>
-              </div>
-
-              <div className="mt-6 text-center">
-                <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick={onClose}>
-                  Close
-                </button>
-              </div>
-
-            </form>
-          </div>
-        </div>
-      </div>
-    </>
-  )
-}
-
+    </div>
+  );
+};
 export default AuthForm
