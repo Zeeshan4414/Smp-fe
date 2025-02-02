@@ -84,6 +84,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   const handleForgotPassword = () => {
     setIsForgotPassword(true);
     setError('');
+    navigate('/forget-password');
   };
 
   return (

@@ -342,7 +342,7 @@
 
 // export default Dashboard
 
-
+import React from "react";
 const placeholderData = [
   {
     id: 1,
@@ -384,9 +384,6 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-
-        {/* Separate Create Post Section */}
-        
       </main>
       <section className="bg-white p-6 shadow-md rounded-lg mb-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Latest Announcements</h2>
