@@ -138,18 +138,21 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const urlParams = new URLSearchParams(window.location.search)
+    const token = urlParams.get('token')
 
     if (token) {
-      // Store the token in localStorage or sessionStorage
-      localStorage.setItem('authToken', token);
+      // Store the token in localStorage
+      localStorage.setItem('authToken', token)
     }
+
     const fetchUserData = async () => {
-      const token = localStorage.getItem('token');
+      // Retrieve the token with the correct key 'authToken'
+      const token = localStorage.getItem('authToken')
+
       if (!token) {
-        console.error('Token is not available in localStorage');
-        return;
+        console.error('Token is not available in localStorage')
+        return
       }
 
       try {
@@ -157,7 +160,7 @@ const Dashboard = () => {
           method: "GET",
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Authorization': `Bearer ${token}`,  // Use the 'authToken' key here
           },
         })
 
