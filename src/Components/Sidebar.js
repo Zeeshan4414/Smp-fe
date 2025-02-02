@@ -128,7 +128,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { Home, Settings, Calendar, MessageCircle, LogOut, PlusCircle, Menu, X } from "lucide-react"
 import logoImage from "../pictures/logo.jpeg"
 
-const Sidebar = () => {
+const Dashboard = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(true)
   const [userInfo, setUserInfo] = useState(null)
   const navigate = useNavigate()
@@ -259,5 +259,5 @@ const Sidebar = () => {
   )
 }
 
-export default Sidebar
+export default Dashboard
 
