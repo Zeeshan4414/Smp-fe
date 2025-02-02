@@ -124,7 +124,7 @@
 // export default Sidebar
 
 import { useState, useEffect } from "react"
-import { Link, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { Home, Settings, Calendar, MessageCircle, LogOut, PlusCircle, Menu, X } from "lucide-react"
 import logoImage from "../pictures/logo.jpeg"
 
