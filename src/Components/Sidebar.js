@@ -193,13 +193,14 @@ const Dashboard = () => {
   }
 
   const sidebarItems = [
-    { name: "Dashboard", icon: <Home />, link: "/dashboard" },
-    { name: "Create Post", icon: <PlusCircle />, link: "/create-post" },
-    { name: "Total Posts", icon: <Calendar />, link: "/posts" },
-    { name: "Scheduled Posts", icon: <Calendar />, link: "/sch-posts" },
-    { name: "Chatbot", icon: <MessageCircle />, link: "/chatbot" },
-    { name: "Settings", icon: <Settings />, link: "/settings" },
-  ];
+    { name: "Dashboard", icon: Home, link: "/dashboard" },
+    { name: "Create Post", icon: PlusCircle, link: "/create-post" },
+    { name: "Total Posts", icon: Calendar, link: "/posts" },
+    { name: "Scheduled Posts", icon: Calendar, link: "/sch-posts" },
+    { name: "Chatbot", icon: MessageCircle, link: "/chatbot" },
+    { name: "Settings", icon: Settings, link: "/settings" },
+
+  ]
   const handleClick = (link) => {
     navigate(link, { state: { email: userInfo.email } }); // Passing email as state
   };
@@ -250,14 +251,16 @@ const Dashboard = () => {
 
       <nav className="flex-grow mt-4 overflow-y-auto">
         {sidebarItems.map((item, index) => (
-          <Link
+          <button
             key={index}
             onClick={() => handleClick(item.link)}
-            className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+            className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors duration-200 w-full text-left"
           >
             <item.icon size={20} className="mr-4" />
             <span className={`${!isSidebarOpen ? "hidden" : ""} transition-opacity duration-300`}>{item.name}</span>
-          </Link>
+          </button>
+
+
         ))}
       </nav>
 
