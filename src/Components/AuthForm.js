@@ -3,15 +3,16 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Loader from './Loader';
 
+
 const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsLoggedIn = () => { } }) => {
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const [message, setMessage] = useState("");
   const [isSignUp, setIsSignUp] = useState(initialSignUp);
+  const [isResetPassword, setIsResetPassword] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState(''); // For reset password
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,38 +26,37 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setMessage('');
-    setIsLoading(true); // Show loading while processing
-
-    if (isForgotPassword) {
-      // Forgot Password Request
-      try {
-        const response = await axios.post("https://smp-be-mysql.vercel.app/auth/forgot-password", { email });
-        setMessage(response.data.msg || "A reset link has been sent to your email.");
-        setIsForgotPassword(false); // Hide the form after submission
-        setEmail("");
-      } catch (err) {
-        setError(err.response?.data?.msg || "Something went wrong.");
-      }
-      setIsLoading(false); // Hide loading after processing
-      return;
-    }
-
+    setIsLoading(true);  // Show loading while processing
     try {
-      let url = isSignUp
-        ? 'https://smp-be-mysql.vercel.app/auth/signup' // Updated URL for signup
-        : 'https://smp-be-mysql.vercel.app/auth/signin'; // Updated URL for signin
+      let url;
+      let method = 'POST'; // Default method
 
-      const payload = { name, email, password };
-      const response = await axios.post(url, payload);
+      if (isResetPassword) {
+        // Password reset logic
+        url = 'https://smp-be-mysql.vercel.app/auth/update-password'; // Updated URL
+        method = 'PUT'; // Change to PUT for password reset
+        const payload = { email, password, newPassword };
+        await axios({ method, url, data: payload });
 
-      if (response.data.token) {
+        console.log('Password reset successful');
+        // Reset form fields and state
+        setIsResetPassword(false);
+        setEmail('');
+        setNewPassword('');
+        // Optionally, navigate to the login page or show a success message
+      } else {
+        // Sign up or sign in logic
+        url = isSignUp
+          ? 'https://smp-be-mysql.vercel.app/auth/signup' // Updated URL for signup
+          : 'https://smp-be-mysql.vercel.app/auth/signin'; // Updated URL for signin
+        const payload = { name, email, password };
+        const response = await axios.post(url, payload);
         localStorage.setItem('authToken', response.data.token);
         setIsLoggedIn(true);
         navigate('/dashboard');
-        if (typeof onClose === 'function') {
-          onClose();
-        }
+      }
+      if (typeof onClose === 'function') {
+        onClose();
       }
     } catch (error) {
       console.error('Authentication error:', error);
@@ -82,140 +82,193 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   };
 
   const handleForgotPassword = () => {
-    setIsForgotPassword(true);
+    setIsResetPassword(true);
     setError('');
   };
 
-  return (
-    <div className="form-container">
-      <h2>{isForgotPassword ? 'Forgot Password' : isSignUp ? 'Sign Up' : 'Sign In'}</h2>
-      {message ? (
-        <p className="success-message">{message}</p> // Display success message
-      ) : (
-        <form onSubmit={handleSubmit} className="auth-form">
-          {error && <p className="error-message">{error}</p>}
+  //     return (
+  //         <div className="form-container">
+  //             <h2>{isResetPassword ? 'Reset Password' : isSignUp ? 'Sign Up' : 'Sign In'}</h2>
+  //             <form onSubmit={handleSubmit} className="auth-form">
+  //                 {error && <p className="error-message">{error}</p>}
+  //                 {!isResetPassword && isSignUp && (
+  //                     <input
+  //                         type="text"
+  //                         placeholder="Name"
+  //                         value={name}
+  //                         onChange={(e) => setName(e.target.value)}
+  //                         required
+  //                         className="input-field"
+  //                     />
+  //                 )}
+  //                 <input
+  //                     type="email"
+  //                     placeholder="Email"
+  //                     value={email}
+  //                     onChange={(e) => setEmail(e.target.value)}
+  //                     required
+  //                     className="input-field"
+  //                 />
+  //                 {!isResetPassword && (
+  //                     <input
+  //                         type="password"
+  //                         placeholder="Password"
+  //                         value={password}
+  //                         onChange={(e) => setPassword(e.target.value)}
+  //                         required
+  //                         className="input-field"
+  //                     />
+  //                 )}
+  //                 {isResetPassword && (
+  //                     <input
+  //                         type="password"
+  //                         placeholder="New Password"
+  //                         value={newPassword}
+  //                         onChange={(e) => setNewPassword(e.target.value)}
+  //                         required
+  //                         className="input-field"
+  //                     />
+  //                 )}
+  //                 <button type="submit" className="submit-btn">
+  //                     {isResetPassword ? 'Reset Password' : isSignUp ? 'Sign Up' : 'Sign In'}
+  //                 </button>
+  //                 {!isResetPassword && (
+  //                     <button type="button" onClick={toggleForm} className="toggle-btn">
+  //                         {isSignUp ? 'Already have an account? Sign In' : 'New here? Sign Up'}
+  //                     </button>
+  //                 )}
+  //                 {!isResetPassword && (
+  //                     <button type="button" onClick={handleForgotPassword} className="forgot-password-btn">
+  //                         Forgot Password?
+  //                     </button>
+  //                 )}
+  //                 <button type="button" className="google-btn" onClick={handleGoogleSignIn}>
+  //                     Continue with Google
+  //                 </button>
+  //                 <button type="button" className="close-btn" onClick={onClose}>Close</button>
+  //             </form>
+  //         </div>
+  //     );
+  // };
 
-          {isForgotPassword ? (
-            <>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="input-field"
-              />
-              <button type="submit" className="submit-btn">
-                Send Reset Link
-              </button>
-              <button type="button" onClick={() => setIsForgotPassword(false)} className="toggle-btn">
-                Back to Sign In
-              </button>
-            </>
-          ) : (
-            <>
-              {isLoading && (
-                <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-gray-500/50 rounded-lg z-10">
-                  <Loader />
+  // export default AuthForm;
+
+  return (
+    <>
+      {isLoading && (
+        <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center bg-gray-500/50 rounded-lg z-10">
+          <Loader />
+        </div>
+      )}
+      <div className="flex items-center justify-center min-h-screen bg-gray-300">
+        <div className="w-full max-w-md">
+          <div className={`${isLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity`}>
+            <form onSubmit={handleSubmit} className=" bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
+              <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+                {isResetPassword ? "Reset Password" : isSignUp ? "Sign Up" : "Sign In"}
+              </h2>
+
+              {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
+
+
+
+              {!isResetPassword && isSignUp && (
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
                 </div>
               )}
-              <div className="flex items-center justify-center min-h-screen bg-gray-300">
-                <div className="w-full max-w-md">
-                  <div className={`${isLoading ? 'opacity-0 pointer-events-none' : 'opacity-100'} transition-opacity`}>
-                    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4">
-                      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-                        {isSignUp ? "Sign Up" : "Sign In"}
-                      </h2>
 
-                      {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
-
-                      {isSignUp && (
-                        <div className="mb-4">
-                          <input
-                            type="text"
-                            placeholder="Name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                          />
-                        </div>
-                      )}
-
-                      <div className="mb-4">
-                        <input
-                          type="email"
-                          placeholder="Email"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          required
-                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
-                      </div>
-
-                      {!isForgotPassword && (
-                        <div className="mb-6">
-                          <input
-                            type="password"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex items-center justify-between mb-6">
-                        <button
-                          type="submit"
-                          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                        >
-                          {isSignUp ? "Sign Up" : "Sign In"}
-                        </button>
-                      </div>
-
-                      {!isForgotPassword && (
-                        <div className="flex flex-col space-y-4">
-                          <button type="button" onClick={toggleForm} className="text-sm text-blue-500 hover:text-blue-800">
-                            {isSignUp ? "Already have an account? Sign In" : "New here? Sign Up"}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={handleForgotPassword}
-                            className="text-sm text-blue-500 hover:text-blue-800"
-                          >
-                            Forgot Password?
-                          </button>
-                        </div>
-                      )}
-
-                      <div className="mt-6">
-                        <button
-                          type="button"
-                          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
-                          onClick={handleGoogleSignIn}
-                        >
-                          Continue with Google
-                        </button>
-                      </div>
-
-                      <div className="mt-6 text-center">
-                        <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick={onClose}>
-                          Close
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
+              <div className="mb-4">
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
               </div>
-            </>
-          )}
-        </form>
-      )}
-    </div>
-  );
-};
 
-export default AuthForm;
+              {!isResetPassword && (
+                <div className="mb-6">
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              )}
+
+              {isResetPassword && (
+                <div className="mb-6">
+                  <input
+                    type="password"
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mb-6">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                >
+                  {isResetPassword ? "Reset Password" : isSignUp ? "Sign Up" : "Sign In"}
+                </button>
+              </div>
+
+              {!isResetPassword && (
+                <div className="flex flex-col space-y-4">
+                  <button type="button" onClick={toggleForm} className="text-sm text-blue-500 hover:text-blue-800">
+                    {isSignUp ? "Already have an account? Sign In" : "New here? Sign Up"}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    className="text-sm text-blue-500 hover:text-blue-800"
+                  >
+                    Forgot Password?
+                  </button>
+                </div>
+              )}
+
+              <div className="mt-6">
+                <button
+                  type="button"
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+                  onClick={handleGoogleSignIn}
+                >
+                  Continue with Google
+                </button>
+              </div>
+
+              <div className="mt-6 text-center">
+                <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick={onClose}>
+                  Close
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
+export default AuthForm
