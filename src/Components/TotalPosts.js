@@ -227,13 +227,13 @@ const TotalPosts = () => {
                 <>
                   <button
                     onClick={() => handleUpdate(post)}
-                    className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+                    className="update-button h-12 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
                   >
                     Update
                   </button>
                   <button
                     onClick={() => handleDelete(post)}
-                    className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+                    className="delete-button h-12 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
                   >
                     Delete
                   </button>
