@@ -425,11 +425,14 @@
 // export default TotalPosts;
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Loader from "./Loader";
 
 // Media component for rendering image and video
 const Media = ({ mediaUrl, index }) => {
   const [isVideo, setIsVideo] = useState(false);
   const [isImage, setIsImage] = useState(false);
+  
+  
 
   useEffect(() => {
     if (mediaUrl.includes(".mp4")) {
@@ -484,6 +487,7 @@ const TotalPosts = () => {
   const [postToUpdate, setPostToUpdate] = useState(null);
   const [updatedCaption, setUpdatedCaption] = useState("");
   const [updatedMedia, setUpdatedMedia] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchPosts = async (email) => {
@@ -553,7 +557,7 @@ const TotalPosts = () => {
 
   const handleSubmitUpdate = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const formData = new FormData();
     formData.append("pageId", postToUpdate.pageId);
     formData.append("postId", postToUpdate.postId);
@@ -581,8 +585,11 @@ const TotalPosts = () => {
       console.error("Error updating post:", error);
       alert("Error updating post.");
     }
+    finally {
+      setLoading(false); // Stop loader
+    }
   };
-
+ 
   return (
     <div className="posts-feed px-6 py-8 bg-gray-50 min-h-screen">
   {!isUpdating ? (
@@ -690,11 +697,17 @@ const TotalPosts = () => {
               <button
                 type="submit"
                 className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600"
+                disabled={loading}
               >
                 Save Changes
               </button>
             </div>
           </form>
+          {loading && (
+        <div className="flex justify-center mt-4">
+          <Loader />
+        </div>
+      )}
         </div>
       )}
     </div>
