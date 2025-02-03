@@ -573,7 +573,7 @@ const TotalPosts = () => {
       if (data.success) {
         alert("Post updated successfully.");
         setPosts(posts.map((post) => (post.postId === postToUpdate.postId ? { ...post, caption: updatedCaption, media: updatedMedia } : post)));
-        setIsUpdating(false);
+        // setIsUpdating(false);
       } else {
         alert("Error updating post.");
       }
