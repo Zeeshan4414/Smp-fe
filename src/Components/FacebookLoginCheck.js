@@ -221,21 +221,17 @@ const FacebookLoginCheck = () => {
             if (response.status === 'connected') {
                 setIsLoggedIn(true);
 
-                // Get the short-lived access token from the login response
                 let accessToken = response.authResponse.accessToken;
 
-                // Fetch the long-lived access token
                 getLongLivedAccessToken(accessToken)
                     .then(longLivedAccessToken => {
-                        // Update the accessToken with the long-lived token
-                        accessToken = longLivedAccessToken; // Now, accessToken holds the long-lived token
+                        accessToken = longLivedAccessToken;
 
-                        // Continue with the rest of your code using the updated accessToken
+                        // Store the long-lived access token in localStorage
+                        localStorage.setItem('fb_access_token', accessToken);
+
                         console.log('Using long-lived access token:', accessToken);
-
-                        // Now you can use this accessToken for your next operations, like fetching pages
-                        fetchPages(accessToken);
-
+                        fetchPages(accessToken); // Use the stored token
                     })
                     .catch(error => {
                         console.error('Error fetching long-lived token:', error);
@@ -252,6 +248,7 @@ const FacebookLoginCheck = () => {
             config_id: '1273277580768760'
         });
     };
+
 
     // Function to exchange short-lived token for a long-lived token
     const getLongLivedAccessToken = async (shortLivedAccessToken) => {
@@ -281,8 +278,8 @@ const FacebookLoginCheck = () => {
     useEffect(() => {
         if (email) {
             console.log('Dashboard Data:', email);
-            // You can now use dashboardData.userName, dashboardData.userRole, etc.
         }
+
         window.fbAsyncInit = function () {
             window.FB.init({
                 appId: '1332019044439778',
@@ -291,9 +288,17 @@ const FacebookLoginCheck = () => {
                 version: 'v20.0'
             });
 
-            window.FB.getLoginStatus(function (response) {
-                statusChangeCallback(response);
-            });
+            // Check login status on page load
+            const storedToken = localStorage.getItem('fb_access_token');
+            if (storedToken) {
+                console.log('User is already connected to Facebook.');
+                fetchPages(storedToken);  // Use the stored token
+                setIsLoggedIn(true);
+            } else {
+                window.FB.getLoginStatus(function (response) {
+                    statusChangeCallback(response);
+                });
+            }
         };
 
         (function (d, s, id) {
@@ -304,6 +309,12 @@ const FacebookLoginCheck = () => {
             fjs.parentNode.insertBefore(js, fjs);
         })(document, 'script', 'facebook-jssdk');
     }, [statusChangeCallback, email]);
+
+    const handleLogout = () => {
+        localStorage.removeItem('fb_access_token'); // Clear the token
+        setIsLoggedIn(false); // Update state
+        window.FB.logout();   // Log out from Facebook as well
+    };
 
     // const handlePost = async () => {
     //     const selectedPage = pages.find(page => page.id === selectedPageId);
@@ -526,6 +537,12 @@ const FacebookLoginCheck = () => {
                         </button>
                     )}
 
+                    <button
+                        onClick={handleLogout}
+                        className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+                    >
+                        Disconnect
+                    </button>
                     {isLoggedIn && pages.length > 0 && (
                         <div>
                             <h2 className="text-xl font-semibold mb-4">Select a Page to Post</h2>
