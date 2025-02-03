@@ -585,61 +585,62 @@ const TotalPosts = () => {
 
   return (
     <div className="posts-feed px-6 py-8 bg-gray-50 min-h-screen">
-    {!isUpdating ? (
-      posts.length > 0 ? (
-        posts.map((post) => (
-          <div key={post.id} className="post-card bg-white shadow-md rounded-lg mb-6 p-6">
-            <div className="post-header mb-4">
-              <h3 className="text-xl font-semibold text-gray-800">{post.pageName || "Page Name"}</h3>
-              <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
-            </div>
-  
-            <div className="post-content mb-4">
-              <p className="text-gray-700">{post.message || "No caption provided."}</p>
-  
-              {post.media && post.media.length > 0 ? (
-                <div className="post-media grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  {post.media.map((mediaUrl, index) => {
-                    // Check if the media is a video or an image
-                    const isVideo = mediaUrl.endsWith(".mp4"); // Check if the URL ends with '.mp4' (adjust as needed)
-                    
-                    return (
-                      <div key={index}>
-                        <Media mediaUrl={mediaUrl} index={index} />
-                        
-                        {/* Only show Update button for images */}
-                        {!isVideo && (
-                          <div className="post-actions flex space-x-4 mt-2">
-                            <button
-                              onClick={() => handleStartUpdate(post)}
-                              className="update-button w-22 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            >
-                              Update
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-gray-500 mt-4">No media available.</p>
-              )}
-            </div>
-  
-            <div className="post-actions flex space-x-4 mt-4">
-              <button
-                onClick={() => handleDelete(post)}
-                className="delete-button w-22 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
+  {!isUpdating ? (
+    posts.length > 0 ? (
+      posts.map((post) => (
+        <div key={post.id} className="post-card bg-white shadow-md rounded-lg mb-6 p-6">
+          <div className="post-header mb-4">
+            <h3 className="text-xl font-semibold text-gray-800">{post.pageName || "Page Name"}</h3>
+            <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
           </div>
-        ))
-      ) : (
-        <p className="text-center text-gray-500">No posts found.</p>
-      )
+
+          <div className="post-content mb-4">
+            <p className="text-gray-700">{post.message || "No caption provided."}</p>
+
+            {post.media && post.media.length > 0 ? (
+              <div className="post-media grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                {post.media.map((mediaUrl, index) => {
+                  // Check if the media is a video or an image
+                  const isVideo = mediaUrl.includes(".mp4"); // Add more video checks if needed
+                  const isImage = !isVideo;
+
+                  return (
+                    <div key={index}>
+                      <Media mediaUrl={mediaUrl} index={index} />
+                      
+                      {/* Only show Update button for images */}
+                      {isImage && (
+                        <div className="post-actions flex space-x-4 mt-2">
+                          <button
+                            onClick={() => handleStartUpdate(post)}
+                            className="update-button w-22 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                          >
+                            Update
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-gray-500 mt-4">No media available.</p>
+            )}
+          </div>
+
+          <div className="post-actions flex space-x-4 mt-4">
+            <button
+              onClick={() => handleDelete(post)}
+              className="delete-button w-22 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      ))
+    ) : (
+      <p className="text-center text-gray-500">No posts found.</p>
+    )
       ) : (
         <div className="update-form bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto mt-8">
           <h3 className="text-2xl font-semibold text-gray-800 mb-4">Update Post</h3>
