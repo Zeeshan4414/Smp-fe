@@ -436,18 +436,16 @@ const placeholderData = [
 
 const Dashboard = () => {
   const location = useLocation();
-  const email = location.state?.email; // Retrieving email from state
+  const email = location.state?.email;
   const [totalPosts, setTotalPosts] = useState(0);
   const [scheduledPosts, setScheduledPosts] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  console.log("emmail is received here:", email);
 
-
-  // Fetch total posts from backend
+  // Fetch total posts
   useEffect(() => {
-    const fetchTotalPosts = async (email) => {
+    const fetchTotalPosts = async () => {
       try {
-        const response = await fetch("https://smp-be-mysql.vercel.app/facebook-upload/posts", {
+        const response = await fetch("https://smp-be-mysql.vercel.app/facebook-upload/posts/count", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -456,35 +454,36 @@ const Dashboard = () => {
         });
 
         const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setTotalPosts(data); // Assuming you still need to set the posts somewhere
-          return data.length; // Returning the total number of posts
-        } else {
-          console.error("Invalid response format:", data);
-          return 0;
-        }
+        setTotalPosts(data.totalPosts || 0);
       } catch (error) {
-        console.error("Error fetching posts:", error);
-        return 0;
+        console.error("Error fetching total posts:", error);
+        setTotalPosts(0);
       }
     };
 
-    // Fetch scheduled posts from backend
     const fetchScheduledPosts = async () => {
       try {
-        const response = await fetch("/api/posts/scheduled");
+        const response = await fetch("https://smp-be-mysql.vercel.app/scheduled//posts/scheduled/count", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        });
+
         const data = await response.json();
-        setScheduledPosts(data.scheduledPosts); // Assuming backend sends { scheduledPosts: number }
+        setScheduledPosts(data.scheduledPosts || 0);
       } catch (error) {
         console.error("Error fetching scheduled posts:", error);
+        setScheduledPosts(0);
       }
     };
 
-    // Call the functions on component mount
-    fetchTotalPosts(email);
-    fetchScheduledPosts();
-    setIsLoading(false); // Stop loading once data is fetched
+    if (email) {
+      fetchTotalPosts();
+      fetchScheduledPosts();
+    }
+    setIsLoading(false);
   }, [email]);
 
   return (
@@ -500,9 +499,9 @@ const Dashboard = () => {
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Dashboard Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { label: "Total Posts", value: totalPosts },
+              { label: "Already Posted", value: totalPosts },
               { label: "Scheduled Posts", value: scheduledPosts },
-              { label: "Already Posted", value: totalPosts - scheduledPosts },
+              { label: "Total Posts", value: totalPosts + scheduledPosts },
             ].map((stat, index) => (
               <div key={index} className="bg-gray-50 p-4 rounded-lg">
                 <h3 className="text-lg font-medium text-gray-700">{stat.label}</h3>
