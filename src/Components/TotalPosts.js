@@ -611,6 +611,9 @@ const TotalPosts = () => {
                       {/* Only show Update button for images */}
                       {isImage && (
                         <div className="post-actions flex space-x-4 mt-2">
+                          <p className="text-sm text-red-500 mb-4">
+        **Note:** If you add new media (image or video), the previous media files will be removed and only the newly added media will be shown.
+      </p>
                           <button
                             onClick={() => handleStartUpdate(post)}
                             className="update-button w-22 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
