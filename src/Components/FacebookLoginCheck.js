@@ -292,11 +292,15 @@ const FacebookLoginCheck = () => {
             const storedToken = localStorage.getItem('fb_access_token');
             if (storedToken) {
                 console.log('User is already connected to Facebook.');
-                fetchPages(storedToken);  // Use the stored token
                 setIsLoggedIn(true);
+                fetchPages(storedToken);  // Use the stored token
             } else {
                 window.FB.getLoginStatus(function (response) {
-                    statusChangeCallback(response);
+                    if (response.status === 'connected') {
+                        setIsLoggedIn(true);
+                        const accessToken = response.authResponse.accessToken;
+                        fetchPages(accessToken);
+                    }
                 });
             }
         };
