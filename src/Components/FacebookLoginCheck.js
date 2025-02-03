@@ -396,6 +396,9 @@ const FacebookLoginCheck = () => {
 
 
     return (
+        <>
+        <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+      
         <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
           <h1 className="text-center text-3xl font-bold text-blue-600 mb-6">Social Page Manager</h1>
       
@@ -532,8 +535,10 @@ const FacebookLoginCheck = () => {
             </div>
           )}
         </div>
+      </div>
+      </>  
       );
-    }      
+    }     
 export default FacebookLoginCheck;
 
 

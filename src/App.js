@@ -45,7 +45,8 @@ const MainLayout = ({ children, homeRef, featuresRef, aboutRef, contactRef  }) =
         )}
         {!loading && <div>{children}</div>}
       </div>
-      <Footer isDashboard={false} />
+      <Footer isDashboard={false} 
+              homeRef={homeRef} featuresRef={featuresRef} aboutRef={aboutRef} contactRef={contactRef} />
     </div>
   );
 }

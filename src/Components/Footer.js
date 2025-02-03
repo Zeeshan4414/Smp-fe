@@ -181,23 +181,25 @@
 
 // export default Footer;
 
-import { useRef } from "react"
+import React from "react"
 import { Link } from "react-router-dom"
 import { Facebook, Twitter, Instagram } from "lucide-react"
 import logoImage from "../pictures/logo.jpeg"
 
-const Footer = ({ isDashboard }) => {
-  const featuresRef = useRef(null)
+const Footer = ({ isDashboard,  homeRef, featuresRef, aboutRef, contactRef}) => {
+
   const scrollTo = (ref) => {
-    ref.current.scrollIntoView({ behavior: "smooth" })
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   const mainQuickLinks = [
-    { name: "Features", action: () => scrollTo(featuresRef) },
-    { name: "Pricing", href: "#pricing" },
-    { name: "About Us", href: "#about" },
-    { name: "Contact", href: "#contact" },
-  ]
+    { name: "Home", ref: homeRef },
+    { name: "Features", ref: featuresRef },
+    { name: "About", ref: aboutRef },
+    { name: "Contact", ref: contactRef },
+  ];
 
   const dashboardQuickLinks = [
     { name: "Dashboard", href: "/dashboard" },
@@ -231,8 +233,12 @@ const Footer = ({ isDashboard }) => {
         <ul className="space-y-2">
           {quickLinks.slice(0, 2).map((link, index) => (
             <li key={index}>
-              {link.action ? (
-                <button className="text-gray-400 hover:text-white transition duration-300" onClick={link.action}>
+              {link.ref ? (
+                <button className="text-gray-400 hover:text-white transition duration-300"key={link.name}
+                onClick={() => {
+                  scrollTo(link.ref)
+                  
+                }}>
                   {link.name}
                 </button>
               ) : (
@@ -276,7 +282,7 @@ const Footer = ({ isDashboard }) => {
           <Twitter className="h-6 w-6" />
         </a>
         <a
-          href="https://www.instagram.com"
+          href="https://www.instagram.com/"
           target="_blank"
           rel="noopener noreferrer"
           className="text-gray-400 hover:text-white"
