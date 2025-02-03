@@ -175,7 +175,7 @@ const FacebookLoginCheck = () => {
     const [pages, setPages] = useState([]);
     const [selectedPageId, setSelectedPageId] = useState(null);
     const [message, setMessage] = useState('');
-    const [userId, setUserId] = useState(null);
+    // const [userId, setUserId] = useState(null);
     const [files, setFiles] = useState([]);
     const [postType, setPostType] = useState('feed'); // Post type dropdown
     const [scheduledDate, setScheduledDate] = useState(''); // State for scheduled date
@@ -193,9 +193,9 @@ const FacebookLoginCheck = () => {
         }
     }, []);
 
-    const fetchUserData = (id) => {
-        setUserId(id);
-    };
+    // const fetchUserData = (id) => {
+    //     setUserId(id);
+    // };
 
     const handleFileChange = (event) => {
         const selectedFiles = Array.from(event.target.files); // Convert FileList to array
@@ -352,10 +352,10 @@ const FacebookLoginCheck = () => {
     const handlePost = async () => {
         const selectedPage = pages.find(page => page.id === selectedPageId);
         if (selectedPage) {
-            if (!userId) {
-                alert('User ID is missing. Please log in again.');
-                return;
-            }
+            // if (!userId) {
+            //     alert('User ID is missing. Please log in again.');
+            //     return;
+            // }
 
             const formData = new FormData();
 
@@ -451,10 +451,10 @@ const FacebookLoginCheck = () => {
     const handleSchedule = async () => {
         const selectedPage = pages.find(page => page.id === selectedPageId);
         if (selectedPage) {
-            if (!userId) {
-                alert('User ID is missing. Please log in again.');
-                return;
-            }
+            // if (!userId) {
+            //     alert('User ID is missing. Please log in again.');
+            //     return;
+            // }
 
             if (!scheduledDate || new Date(scheduledDate) < new Date()) {
                 alert('Please select a future date and time for scheduling.');
