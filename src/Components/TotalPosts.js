@@ -611,9 +611,7 @@ const TotalPosts = () => {
                       {/* Only show Update button for images */}
                       {isImage && (
                         <div className="post-actions flex space-x-4 mt-2">
-                          <p className="text-sm text-red-500 mb-4">
-        **Note:** If you add new media (image or video), the previous media files will be removed and only the newly added media will be shown.
-      </p>
+                          
                           <button
                             onClick={() => handleStartUpdate(post)}
                             className="update-button w-22 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
@@ -647,8 +645,12 @@ const TotalPosts = () => {
       ) : (
         <div className="update-form bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto mt-8">
           <h3 className="text-2xl font-semibold text-gray-800 mb-4">Update Post</h3>
+          <p className="text-sm text-red-500 mb-4">
+        **Note:** If you add new media (image or video), the previous media files will be removed and only the newly added media will be shown.
+      </p>
           <form onSubmit={handleSubmitUpdate} className="space-y-4">
             <div>
+            
               <label className="block text-sm font-medium text-gray-700">Caption:</label>
               <textarea
                 value={updatedCaption}
