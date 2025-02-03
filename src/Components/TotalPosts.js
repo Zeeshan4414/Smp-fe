@@ -593,61 +593,31 @@ const TotalPosts = () => {
                 <h3 className="text-xl font-semibold text-gray-800">{post.pageName || "Page Name"}</h3>
                 <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
               </div>
-  
+
               <div className="post-content mb-4">
                 <p className="text-gray-700">{post.message || "No caption provided."}</p>
-  
+
                 {post.media && post.media.length > 0 ? (
                   <div className="post-media grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                     {post.media.map((mediaUrl, index) => (
-                      <div key={index}>
-                        {mediaUrl.endsWith(".mp4") || mediaUrl.endsWith(".mov") ? (
-                          <div>
-                            <Media mediaUrl={mediaUrl} index={index} />
-                            <button
-                              onClick={() => handleDelete(post, index)}
-                              className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mt-4"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        ) : (
-                          <div>
-                            <Media mediaUrl={mediaUrl} index={index} />
-                            <div className="flex space-x-4 mt-4">
-                              <button
-                                onClick={() => handleStartUpdate(post, index)}
-                                className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                              >
-                                Update
-                              </button>
-                              <button
-                                onClick={() => handleDelete(post, index)}
-                                className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </div>
+                      <Media key={index} mediaUrl={mediaUrl} index={index} />
                     ))}
                   </div>
                 ) : (
                   <p className="text-gray-500 mt-4">No media available.</p>
                 )}
               </div>
-  
+
               <div className="post-actions flex space-x-4 mt-4">
                 <button
                   onClick={() => handleStartUpdate(post)}
-                  className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  className="update-button w-22 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                 >
                   Update
                 </button>
                 <button
                   onClick={() => handleDelete(post)}
-                  className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                  className="delete-button w-22 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                 >
                   Delete
                 </button>
@@ -676,7 +646,6 @@ const TotalPosts = () => {
               <input
                 type="file"
                 multiple
-                accept="image/*"
                 onChange={handleFileChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
@@ -685,45 +654,13 @@ const TotalPosts = () => {
                   {updatedMedia.map((media, index) => (
                     <div key={index}>
                       {typeof media === "string" ? (
-                        <div>
-                          <Media mediaUrl={media} index={index} />
-                          <div className="flex space-x-4 mt-4">
-                            <button
-                              onClick={() => handleStartUpdate(posts, index)}
-                              className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            >
-                              Update
-                            </button>
-                            <button
-                              onClick={() => handleDelete(posts, index)}
-                              className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
+                        <Media mediaUrl={media} index={index} />
                       ) : (
-                        <div>
-                          <img
-                            src={URL.createObjectURL(media)}
-                            alt={`New Media ${index}`}
-                            className="w-full rounded-lg"
-                          />
-                          <div className="flex space-x-4 mt-4">
-                            <button
-                              onClick={() => handleStartUpdate(posts, index)}
-                              className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                            >
-                              Update
-                            </button>
-                            <button
-                              onClick={() => handleDelete(posts, index)}
-                              className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </div>
+                        <img
+                          src={URL.createObjectURL(media)}
+                          alt={`New Media ${index}`}
+                          className="w-full rounded-lg"
+                        />
                       )}
                     </div>
                   ))}
@@ -743,6 +680,6 @@ const TotalPosts = () => {
       )}
     </div>
   );
-}  
+};
 
 export default TotalPosts;
