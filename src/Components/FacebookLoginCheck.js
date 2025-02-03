@@ -186,7 +186,7 @@ const FacebookLoginCheck = () => {
         console.log("i am here");
         if (response.status === 'connected') {
             setIsLoggedIn(true);
-            fetchUserData(response.authResponse.userID);
+            // fetchUserData(response.authResponse.userID);
             fetchPages(response.authResponse.accessToken);
         } else {
             setIsLoggedIn(false);
