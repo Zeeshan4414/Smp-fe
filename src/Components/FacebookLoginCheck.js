@@ -529,25 +529,27 @@ const FacebookLoginCheck = () => {
     return (
         <>
             <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '600px', margin: 'auto' }}>
-
                 <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
                     <h1 className="text-center text-3xl font-bold text-blue-600 mb-6">Social Page Manager</h1>
 
-                    {!isLoggedIn && (
+                    {/* Toggle Buttons Based on isLoggedIn */}
+                    {!isLoggedIn ? (
                         <button
                             onClick={loginWithFacebook}
                             className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
                         >
                             Connect Account
                         </button>
+                    ) : (
+                        <button
+                            onClick={handleLogout}
+                            className="px-5 py-3 text-white bg-red-600 hover:bg-red-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+                        >
+                            Disconnect Account
+                        </button>
                     )}
 
-                    <button
-                        onClick={handleLogout}
-                        className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
-                    >
-                        Disconnect
-                    </button>
+                    {/* Form Only When Logged In */}
                     {isLoggedIn && pages.length > 0 && (
                         <div>
                             <h2 className="text-xl font-semibold mb-4">Select a Page to Post</h2>
@@ -581,7 +583,6 @@ const FacebookLoginCheck = () => {
                                 <option value="reels">Reels</option>
                             </select>
 
-                            {/* Conditional Note Display */}
                             {postType === "feed" && (
                                 <p className="text-sm text-gray-600 mb-4">
                                     You can upload only images or only videos for Feed posts, but not both at once.
@@ -593,7 +594,6 @@ const FacebookLoginCheck = () => {
                                 </p>
                             )}
 
-                            {/* File Input with Type Restriction */}
                             <input
                                 type="file"
                                 accept={
@@ -608,7 +608,6 @@ const FacebookLoginCheck = () => {
                                 className="block w-full text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-600 file:cursor-pointer file:transition-all mb-4"
                             />
 
-                            {/* File Type Validation: Restrict mixing of images and videos */}
                             {postType === "feed" && (
                                 <p className="text-sm text-red-500 mb-4">
                                     {files.some((file) => file.type.startsWith("image")) &&
@@ -668,7 +667,7 @@ const FacebookLoginCheck = () => {
                             <button
                                 onClick={handleSchedule}
                                 disabled={isLoading}
-                                className={`px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}  rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all`}
+                                className={`px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'} rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all`}
                             >
                                 {isLoading ? 'Scheduling...' : 'Schedule Post'}
                             </button>
@@ -678,6 +677,7 @@ const FacebookLoginCheck = () => {
             </div>
         </>
     );
+
 }
 export default FacebookLoginCheck;
 
