@@ -179,6 +179,8 @@ const FacebookLoginCheck = () => {
     const [files, setFiles] = useState([]);
     const [postType, setPostType] = useState('feed'); // Post type dropdown
     const [scheduledDate, setScheduledDate] = useState(''); // State for scheduled date
+    const [isLoading, setIsLoading] = useState(false);
+
 
     const statusChangeCallback = useCallback((response) => {
         console.log("i am here");
@@ -303,97 +305,205 @@ const FacebookLoginCheck = () => {
         })(document, 'script', 'facebook-jssdk');
     }, [statusChangeCallback, email]);
 
+    // const handlePost = async () => {
+    //     const selectedPage = pages.find(page => page.id === selectedPageId);
+    //     if (selectedPage) {
+    //         if (!userId) {
+    //             alert('User ID is missing. Please log in again.');
+    //             return;
+    //         }
+
+    //         const formData = new FormData();
+
+    //         files.forEach((file) => {
+    //             formData.append('files', file);
+    //         });
+
+    //         if (message) {
+    //             formData.append('caption', message);
+    //         }
+
+    //         formData.append('accessToken', selectedPage.access_token);
+    //         formData.append('pageId', selectedPageId);
+    //         formData.append('postType', postType); // Include post type in form data
+    //         formData.append('email', email); // Send email to backend
+
+    //         console.log('post type added');
+    //         try {
+    //             const response = await fetch('https://smp-be-mysql.vercel.app/facebook-upload/upload', {
+    //                 method: 'POST',
+    //                 body: formData,
+    //             });
+
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! status: ${response.status}`);
+    //             }
+
+    //             const result = await response.json();
+    //             console.log('Upload result:', result);
+    //         } catch (error) {
+    //             console.error('Error uploading to backend:', error);
+    //             alert(`Error uploading: ${error.message}`);
+    //         }
+    //     } else {
+    //         alert('Please select a page to post to.');
+    //     }
+    // };
     const handlePost = async () => {
-        const selectedPage = pages.find(page => page.id === selectedPageId);
-        if (selectedPage) {
-            if (!userId) {
-                alert('User ID is missing. Please log in again.');
-                return;
-            }
+      const selectedPage = pages.find(page => page.id === selectedPageId);
+      if (selectedPage) {
+          if (!userId) {
+              alert('User ID is missing. Please log in again.');
+              return;
+          }
+  
+          const formData = new FormData();
+  
+          files.forEach((file) => {
+              formData.append('files', file);
+          });
+  
+          if (message) {
+              formData.append('caption', message);
+          }
+  
+          formData.append('accessToken', selectedPage.access_token);
+          formData.append('pageId', selectedPageId);
+          formData.append('postType', postType);
+          formData.append('email', email);
+  
+          setIsLoading(true); // Show loading state
+          try {
+              const response = await fetch('https://smp-be-mysql.vercel.app/facebook-upload/upload', {
+                  method: 'POST',
+                  body: formData,
+              });
+  
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+  
+              const result = await response.json();
+              console.log('Upload result:', result);
+              alert('Post uploaded successfully!');
+              
+              // Clear form fields
+              setFiles([]);
+              setMessage('');
+              setSelectedPageId('');
+              setPostType('feed');
+          } catch (error) {
+              console.error('Error uploading to backend:', error);
+              alert(`Error uploading: ${error.message}`);
+          } finally {
+              setIsLoading(false); // Reset loading state
+          }
+      } else {
+          alert('Please select a page to post to.');
+      }
+  };
+    // const handleSchedule = async () => {
+    //     const selectedPage = pages.find(page => page.id === selectedPageId);
+    //     if (selectedPage) {
+    //         if (!userId) {
+    //             alert('User ID is missing. Please log in again.');
+    //             return;
+    //         }
 
-            const formData = new FormData();
+    //         const formData = new FormData();
 
-            files.forEach((file) => {
-                formData.append('files', file);
-            });
+    //         files.forEach((file) => {
+    //             formData.append('files', file);
+    //         });
 
-            if (message) {
-                formData.append('caption', message);
-            }
+    //         if (message) {
+    //             formData.append('caption', message);
+    //         }
 
-            formData.append('accessToken', selectedPage.access_token);
-            formData.append('pageId', selectedPageId);
-            formData.append('postType', postType); // Include post type in form data
-            formData.append('email', email); // Send email to backend
+    //         formData.append('scheduledDate', scheduledDate);
 
-            console.log('post type added');
-            try {
-                const response = await fetch('https://smp-be-mysql.vercel.app/facebook-upload/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
+    //         formData.append('accessToken', selectedPage.access_token);
+    //         formData.append('pageId', selectedPageId);
+    //         formData.append('postType', postType); // Include post type in form data
+    //         formData.append('email', email); // Send email to backend
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+    //         console.log('post type added');
+    //         try {
+    //             const response = await fetch('https://smp-be-mysql.vercel.app/scheduled/schedule-post', {
+    //                 method: 'POST',
+    //                 body: formData,
+    //             });
 
-                const result = await response.json();
-                console.log('Upload result:', result);
-            } catch (error) {
-                console.error('Error uploading to backend:', error);
-                alert(`Error uploading: ${error.message}`);
-            }
-        } else {
-            alert('Please select a page to post to.');
-        }
-    };
+    //             if (!response.ok) {
+    //                 throw new Error(`HTTP error! status: ${response.status}`);
+    //             }
+
+    //             const result = await response.json();
+    //             console.log('Upload result:', result);
+    //         } catch (error) {
+    //             console.error('Error uploading to backend:', error);
+    //             alert(`Error uploading: ${error.message}`);
+    //         }
+    //     } else {
+    //         alert('Please select a page to post to.');
+    //     }
+    // };
     const handleSchedule = async () => {
-        const selectedPage = pages.find(page => page.id === selectedPageId);
-        if (selectedPage) {
-            if (!userId) {
-                alert('User ID is missing. Please log in again.');
-                return;
-            }
-
-            const formData = new FormData();
-
-            files.forEach((file) => {
-                formData.append('files', file);
-            });
-
-            if (message) {
-                formData.append('caption', message);
-            }
-
-            formData.append('scheduledDate', scheduledDate);
-
-            formData.append('accessToken', selectedPage.access_token);
-            formData.append('pageId', selectedPageId);
-            formData.append('postType', postType); // Include post type in form data
-            formData.append('email', email); // Send email to backend
-
-            console.log('post type added');
-            try {
-                const response = await fetch('https://smp-be-mysql.vercel.app/scheduled/schedule-post', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const result = await response.json();
-                console.log('Upload result:', result);
-            } catch (error) {
-                console.error('Error uploading to backend:', error);
-                alert(`Error uploading: ${error.message}`);
+      const selectedPage = pages.find(page => page.id === selectedPageId);
+      if (selectedPage) {
+          if (!userId) {
+              alert('User ID is missing. Please log in again.');
+              return;
+          }
+  
+          const formData = new FormData();
+  
+          files.forEach((file) => {
+              formData.append('files', file);
+          });
+  
+          if (message) {
+              formData.append('caption', message);
+          }
+  
+          formData.append('scheduledDate', scheduledDate);
+          formData.append('accessToken', selectedPage.access_token);
+          formData.append('pageId', selectedPageId);
+          formData.append('postType', postType);
+          formData.append('email', email);
+  
+          setIsLoading(true); // Show loading state
+  
+          try {
+              const response = await fetch('https://smp-be-mysql.vercel.app/scheduled/schedule-post', {
+                  method: 'POST',
+                  body: formData,
+              });
+  
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+  
+              const result = await response.json();
+              console.log('Upload result:', result);
+              alert('Post scheduled successfully!');
+  
+              // Clear form fields
+              setFiles([]);
+              setMessage('');
+              setSelectedPageId('');
+              setScheduledDate('');
+              setPostType('feed');
+          } catch (error) {
+              console.error('Error uploading to backend:', error);
+              alert(`Error uploading: ${error.message}`);
+            } finally {
+                setIsLoading(false); // Reset loading state
             }
         } else {
             alert('Please select a page to post to.');
         }
-    };
-
+    };  
 
     return (
         <>
@@ -510,9 +620,10 @@ const FacebookLoginCheck = () => {
       
               <button
                 onClick={handlePost}
-                className="px-5 py-3 text-white bg-green-600 hover:bg-green-700 rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
+                disabled={isLoading}
+                className="px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
               >
-                Post to Page
+                {isLoading ? 'Posting...' : 'Post to Page'}
               </button>
       
               <label htmlFor="scheduledDate" className="block font-semibold mb-2">
@@ -528,9 +639,10 @@ const FacebookLoginCheck = () => {
       
               <button
                 onClick={handleSchedule}
-                className="px-5 py-3 text-white bg-gray-500 hover:bg-gray-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+                disabled={isLoading}
+                className="px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}  rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
               >
-                Schedule a Post
+                {isLoading ? 'Scheduling...' : 'Schedule Post'}
               </button>
             </div>
           )}
