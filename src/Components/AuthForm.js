@@ -10,56 +10,53 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState(''); // For reset password
+  const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
     setIsSignUp(initialSignUp);
-
     setTimeout(() => {
-      setIsLoading(false); // Hide loader after the delay
-    }, 2000); // Adjust delay as needed
+      setIsLoading(false);
+    }, 2000);
   }, [initialSignUp]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);  // Show loading while processing
+    setIsLoading(true);
+
     try {
       let url;
-      let method = 'POST'; // Default method
+      let method = 'POST';
 
       if (isResetPassword) {
-        // Password reset logic
-        url = 'https://smp-be-mysql.vercel.app/auth/update-password'; // Updated URL
-        method = 'PUT'; // Change to PUT for password reset
+        url = 'https://smp-be-mysql.vercel.app/auth/update-password';
+        method = 'PUT';
         const payload = { email, password, newPassword };
         await axios({ method, url, data: payload });
 
         console.log('Password reset successful');
-        // Reset form fields and state
         setIsResetPassword(false);
         setEmail('');
         setNewPassword('');
-        // Optionally, navigate to the login page or show a success message
       } else {
-        // Sign up or sign in logic
         url = isSignUp
-          ? 'https://smp-be-mysql.vercel.app/auth/signup' // Updated URL for signup
-          : 'https://smp-be-mysql.vercel.app/auth/signin'; // Updated URL for signin
+          ? 'https://smp-be-mysql.vercel.app/auth/signup'
+          : 'https://smp-be-mysql.vercel.app/auth/signin';
         const payload = { name, email, password };
         const response = await axios.post(url, payload);
         localStorage.setItem('authToken', response.data.token);
         setIsLoggedIn(true);
+
+        if (typeof onClose === 'function') {
+          onClose(); // First close the modal or popup
+        }
+
+        // Redirect AFTER onClose
         navigate('/dashboard');
       }
-      if (typeof onClose === 'function') {
-        onClose();       
-      }
-      
-
     } catch (error) {
       console.error('Authentication error:', error);
       if (error.response) {
@@ -73,6 +70,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
       setIsLoading(false);
     }
   };
+
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
@@ -259,7 +257,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
               </div>
 
               <div className="mt-6 text-center">
-                <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick= {onClose = () => { navigate('/')}}>
+                <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick={onClose = () => { navigate('/') }}>
                   Close
                 </button>
               </div>
