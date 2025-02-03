@@ -123,15 +123,20 @@ const TotalPosts = () => {
       alert("Failed to delete post.");
     }
   };
-
-  const handleUpdate = (post) => {
-    setIsUpdating(true);
+  const handleStartUpdate = (post) => {
     setPostToUpdate(post);
-    setUpdatedCaption(post.message);
-
-    // Ensure media is always an array, even if null or undefined
-    setUpdatedMedia(post.media && post.media.length > 0 ? post.media : []);
+    setUpdatedCaption(post.message || "");
+    setUpdatedMedia(post.media || []);
+    setIsUpdating(true);
   };
+  // const handleUpdate = (post) => {
+  //   setIsUpdating(true);
+  //   setPostToUpdate(post);
+  //   setUpdatedCaption(post.message);
+
+  //   // Ensure media is always an array, even if null or undefined
+  //   setUpdatedMedia(post.media && post.media.length > 0 ? post.media : []);
+  // };
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -182,10 +187,131 @@ const TotalPosts = () => {
     }
   };
 
-  return (
-    <div className="posts-feed px-6 py-8 bg-gray-50 min-h-screen">
-      {/* Posts Section */}
-      {posts.length > 0 ? (
+//   return (
+//     <div className="posts-feed px-6 py-8 bg-gray-50 min-h-screen">
+//       {/* Posts Section */}
+//       {posts.length > 0 ? (
+//         posts.map((post) => (
+//           <div key={post.id} className="post-card bg-white shadow-md rounded-lg mb-6 p-6">
+//             {/* Post Header */}
+//             <div className="post-header mb-4">
+//               <h3 className="text-xl font-semibold text-gray-800">{post.pageName || "Page Name"}</h3>
+//               <p className="text-sm text-gray-500">{new Date(post.createdAt).toLocaleString()}</p>
+//             </div>
+
+//             {/* Post Content */}
+//             <div className="post-content mb-4">
+//               <p className="text-gray-700">{post.message || "No caption provided."}</p>
+
+//               {/* Media */}
+//               {post.media && post.media.length > 0 ? (
+//                 <div className="post-media grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+//                   {post.media.map((mediaUrl, index) => (
+//                     <Media key={index} mediaUrl={mediaUrl} index={index} />
+//                   ))}
+//                 </div>
+//               ) : post.mediaUrl ? (
+//                 <div className="post-media mt-4">
+//                   <Media mediaUrl={post.mediaUrl} index={0} />
+//                 </div>
+//               ) : (
+//                 <p className="text-gray-500 mt-4">No media available.</p>
+//               )}
+//             </div>
+
+//             {/* Action Buttons */}
+//             <div className="post-actions h-32 flex space-x-4 mt-4">
+//               {post.media && post.media.length > 0 && post.media.every((mediaUrl) => mediaUrl.includes(".mp4")) ? (
+//                 <button
+//                   onClick={() => handleDelete(post)}
+//                   className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+//                 >
+//                   Delete
+//                 </button>
+//               ) : (
+//                 <>
+//                   <button
+//                     onClick={() => handleUpdate(post)}
+//                     className="update-button h-22 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+//                   >
+//                     Update
+//                   </button>
+//                   <button
+//                     onClick={() => handleDelete(post)}
+//                     className="delete-button h-22 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+//                   >
+//                     Delete
+//                   </button>
+//                 </>
+//               )}
+//             </div>
+//           </div>
+//         ))
+//       ) : (
+//         <p className="text-center text-gray-500">No posts found.</p>
+//       )}
+
+//       {/* Update Post Form */}
+//       {isUpdating && postToUpdate && (
+//         <div className="update-form bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto mt-8">
+//           <h3 className="text-2xl font-semibold text-gray-800 mb-4">Update Post</h3>
+//           <form onSubmit={handleSubmitUpdate} className="space-y-4">
+//             <div>
+//               <label className="block text-sm font-medium text-gray-700">Caption:</label>
+//               <textarea
+//                 value={updatedCaption}
+//                 onChange={(e) => setUpdatedCaption(e.target.value)}
+//                 rows="4"
+//                 placeholder="Update the caption..."
+//                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+//               />
+//             </div>
+//             <div>
+//               <label className="block text-sm font-medium text-gray-700">Media:</label>
+//               <input
+//                 type="file"
+//                 multiple
+//                 onChange={handleFileChange}
+//                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+//               />
+//               {updatedMedia.length > 0 && (
+//                 <div className="updated-media-preview grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+//                   {updatedMedia.map((media, index) => (
+//                     <div key={index}>
+//                       {typeof media === "string" ? (
+//                         <Media mediaUrl={media} index={index} />
+//                       ) : (
+//                         <img
+//                           src={URL.createObjectURL(media)}
+//                           alt={`New Media ${index}`}
+//                           className="w-full rounded-lg"
+//                           style={{ maxWidth: "100%", margin: "10px 0" }}
+//                         />
+//                       )}
+//                     </div>
+//                   ))}
+//                 </div>
+//               )}
+//             </div>
+//             <div className="flex justify-end space-x-4 mt-4">
+//               <button
+//                 type="submit"
+//                 className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
+//               >
+//                 Save Changes
+//               </button>
+//             </div>
+//           </form>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+return (
+  <div className="posts-feed px-6 py-8 bg-gray-50 min-h-screen">
+    {/* Posts Section */}
+    {!isUpdating ? (
+      posts.length > 0 ? (
         posts.map((post) => (
           <div key={post.id} className="post-card bg-white shadow-md rounded-lg mb-6 p-6">
             {/* Post Header */}
@@ -205,102 +331,95 @@ const TotalPosts = () => {
                     <Media key={index} mediaUrl={mediaUrl} index={index} />
                   ))}
                 </div>
-              ) : post.mediaUrl ? (
-                <div className="post-media mt-4">
-                  <Media mediaUrl={post.mediaUrl} index={0} />
-                </div>
               ) : (
                 <p className="text-gray-500 mt-4">No media available.</p>
               )}
             </div>
 
             {/* Action Buttons */}
-            <div className="post-actions h-32 flex space-x-4 mt-4">
-              {post.media && post.media.length > 0 && post.media.every((mediaUrl) => mediaUrl.includes(".mp4")) ? (
-                <button
-                  onClick={() => handleDelete(post)}
-                  className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
-                >
-                  Delete
-                </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => handleUpdate(post)}
-                    className="update-button h-22 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-                  >
-                    Update
-                  </button>
-                  <button
-                    onClick={() => handleDelete(post)}
-                    className="delete-button h-22 bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
-                  >
-                    Delete
-                  </button>
-                </>
-              )}
+            <div className="post-actions flex space-x-4 mt-4">
+              <button
+                onClick={() => handleStartUpdate(post)}
+                className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+              >
+                Update
+              </button>
+              <button
+                onClick={() => handleDelete(post)}
+                className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-300"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))
       ) : (
         <p className="text-center text-gray-500">No posts found.</p>
-      )}
-
-      {/* Update Post Form */}
-      {isUpdating && postToUpdate && (
-        <div className="update-form bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto mt-8">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-4">Update Post</h3>
-          <form onSubmit={handleSubmitUpdate} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Caption:</label>
-              <textarea
-                value={updatedCaption}
-                onChange={(e) => setUpdatedCaption(e.target.value)}
-                rows="4"
-                placeholder="Update the caption..."
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Media:</label>
-              <input
-                type="file"
-                multiple
-                onChange={handleFileChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              {updatedMedia.length > 0 && (
-                <div className="updated-media-preview grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-                  {updatedMedia.map((media, index) => (
-                    <div key={index}>
-                      {typeof media === "string" ? (
-                        <Media mediaUrl={media} index={index} />
-                      ) : (
-                        <img
-                          src={URL.createObjectURL(media)}
-                          alt={`New Media ${index}`}
-                          className="w-full rounded-lg"
-                          style={{ maxWidth: "100%", margin: "10px 0" }}
-                        />
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="flex justify-end space-x-4 mt-4">
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                Save Changes
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-    </div>
-  );
+      )
+    ) : (
+      // Update Post Form
+      <div className="update-form bg-white shadow-lg rounded-lg p-6 max-w-md mx-auto mt-8">
+        <h3 className="text-2xl font-semibold text-gray-800 mb-4">Update Post</h3>
+        <p className="text-sm text-red-500 mb-2">
+          Note: Changing or adding images will delete the existing ones.
+        </p>
+        <form onSubmit={handleSubmitUpdate} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Caption:</label>
+            <textarea
+              value={updatedCaption}
+              onChange={(e) => setUpdatedCaption(e.target.value)}
+              rows="4"
+              placeholder="Update the caption..."
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Media:</label>
+            <input
+              type="file"
+              multiple
+              onChange={handleFileChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {updatedMedia.length > 0 && (
+              <div className="updated-media-preview grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+                {updatedMedia.map((media, index) => (
+                  <div key={index}>
+                    {typeof media === "string" ? (
+                      <Media mediaUrl={media} index={index} />
+                    ) : (
+                      <img
+                        src={URL.createObjectURL(media)}
+                        alt={`New Media ${index}`}
+                        className="w-full rounded-lg"
+                        style={{ maxWidth: "100%", margin: "10px 0" }}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="flex justify-end space-x-4 mt-4">
+            <button
+              type="submit"
+              className="bg-blue-500 text-white py-2 px-6 rounded-md hover:bg-blue-600 transition duration-300"
+            >
+              Save Changes
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsUpdating(false)}
+              className="bg-gray-500 text-white py-2 px-6 rounded-md hover:bg-gray-600 transition duration-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    )}
+  </div>
+);
 }
-
 export default TotalPosts;
