@@ -217,53 +217,39 @@ const FacebookLoginCheck = () => {
     };
 
     const loginWithFacebook = () => {
-        window.FB.login(function (response) {
+        window.FB.login((response) => {
             if (response.status === 'connected') {
                 setIsLoggedIn(true);
+                const shortLivedToken = response.authResponse.accessToken;
 
-                let accessToken = response.authResponse.accessToken;
-
-                getLongLivedAccessToken(accessToken)
+                getLongLivedAccessToken(shortLivedToken)
                     .then(longLivedAccessToken => {
-                        accessToken = longLivedAccessToken;
-
-                        // Store the long-lived access token in localStorage
-                        localStorage.setItem('fb_access_token', accessToken);
-
-                        console.log('Using long-lived access token:', accessToken);
-                        fetchPages(accessToken); // Use the stored token
+                        localStorage.setItem('fb_access_token', longLivedAccessToken); // Store token
+                        fetchPages(longLivedAccessToken); // Use long-lived token to fetch pages
                     })
                     .catch(error => {
                         console.error('Error fetching long-lived token:', error);
                         alert('Failed to fetch long-lived access token.');
                     });
-
-            } else if (response.status === 'not_authorized') {
-                alert('You need to authorize the app to manage your Facebook pages.');
             } else {
                 alert('Facebook login failed. Please try again.');
             }
         }, {
-            scope: 'email, public_profile, pages_show_list, pages_manage_posts',
-            config_id: '1273277580768760'
+            scope: 'email, public_profile, pages_show_list, pages_manage_posts'
         });
     };
 
-
-    // Function to exchange short-lived token for a long-lived token
+    // Function to exchange the short-lived token for a long-lived token
     const getLongLivedAccessToken = async (shortLivedAccessToken) => {
         try {
-            const appId = '1332019044439778'; // Replace with your app's ID
-            const appSecret = '84b1a81f8b8129f43983db4e9692a39a'; // Replace with your app's secret
+            const appId = '1332019044439778';
+            const appSecret = '84b1a81f8b8129f43983db4e9692a39a';
 
             const response = await fetch(`https://graph.facebook.com/v12.0/oauth/access_token?` +
-                `grant_type=fb_exchange_token&` +
-                `client_id=${appId}&` +
-                `client_secret=${appSecret}&` +
-                `fb_exchange_token=${shortLivedAccessToken}`);
+                `grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortLivedAccessToken}`
+            );
 
             const data = await response.json();
-
             if (data.access_token) {
                 return data.access_token; // Return the long-lived access token
             } else {
@@ -275,12 +261,15 @@ const FacebookLoginCheck = () => {
         }
     };
 
+    // Handle user logout
+    const handleLogout = () => {
+        localStorage.removeItem('fb_access_token'); // Clear token from storage
+        setIsLoggedIn(false); // Update state
+        window.FB.logout(); // Facebook logout
+    };
 
+    // Initialize Facebook SDK and check login status on page load
     useEffect(() => {
-        if (email) {
-            console.log('Dashboard Data:', email);
-        }
-
         window.fbAsyncInit = function () {
             window.FB.init({
                 appId: '1332019044439778',
@@ -289,37 +278,28 @@ const FacebookLoginCheck = () => {
                 version: 'v20.0'
             });
 
-            // Check login status on page load
+            // Check if the user is already logged in by checking the token in localStorage
             const storedToken = localStorage.getItem('fb_access_token');
             if (storedToken) {
                 console.log('User is already connected to Facebook.');
-                setIsLoggedIn(true);
-                fetchPages(storedToken);  // Use the stored token
+                window.FB.setAccessToken(storedToken);  // Set the stored token in the Facebook SDK
+                window.FB.getLoginStatus(statusChangeCallback);  // Check the login status using the token
             } else {
-                window.FB.getLoginStatus(function (response) {
-                    if (response.status === 'connected') {
-                        setIsLoggedIn(true);
-                        const accessToken = response.authResponse.accessToken;
-                        fetchPages(accessToken);
-                    }
-                });
+                // If no stored token, check Facebook login status
+                window.FB.getLoginStatus(statusChangeCallback);
             }
         };
 
+        // Dynamically load the Facebook SDK
         (function (d, s, id) {
+            if (d.getElementById(id)) return;
             const js = d.createElement(s);
             js.id = id;
             js.src = 'https://connect.facebook.net/en_US/sdk.js';
             const fjs = d.getElementsByTagName(s)[0];
             fjs.parentNode.insertBefore(js, fjs);
         })(document, 'script', 'facebook-jssdk');
-    }, [statusChangeCallback, email, location.pathname]);
-
-    const handleLogout = () => {
-        localStorage.removeItem('fb_access_token'); // Clear the token
-        setIsLoggedIn(false); // Update state
-        window.FB.logout();   // Log out from Facebook as well
-    };
+    }, [statusChangeCallback, email]);
 
     // const handlePost = async () => {
     //     const selectedPage = pages.find(page => page.id === selectedPageId);
