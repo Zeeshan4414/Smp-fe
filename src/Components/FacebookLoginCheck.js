@@ -175,27 +175,20 @@ const FacebookLoginCheck = () => {
     const [pages, setPages] = useState([]);
     const [selectedPageId, setSelectedPageId] = useState(null);
     const [message, setMessage] = useState('');
-    // const [userId, setUserId] = useState(null);
     const [files, setFiles] = useState([]);
     const [postType, setPostType] = useState('feed'); // Post type dropdown
     const [scheduledDate, setScheduledDate] = useState(''); // State for scheduled date
     const [isLoading, setIsLoading] = useState(false);
 
-
     const statusChangeCallback = useCallback((response) => {
         console.log("i am here");
         if (response.status === 'connected') {
             setIsLoggedIn(true);
-            // fetchUserData(response.authResponse.userID);
             fetchPages(response.authResponse.accessToken);
         } else {
             setIsLoggedIn(false);
         }
     }, []);
-
-    // const fetchUserData = (id) => {
-    //     setUserId(id);
-    // };
 
     const handleFileChange = (event) => {
         const selectedFiles = Array.from(event.target.files); // Convert FileList to array
@@ -220,16 +213,11 @@ const FacebookLoginCheck = () => {
         window.FB.login(function (response) {
             if (response.status === 'connected') {
                 setIsLoggedIn(true);
-
                 let accessToken = response.authResponse.accessToken;
-
                 getLongLivedAccessToken(accessToken)
                     .then(longLivedAccessToken => {
                         accessToken = longLivedAccessToken;
-
-                        // Store the long-lived access token in localStorage
                         localStorage.setItem('fb_access_token', accessToken);
-
                         console.log('Using long-lived access token:', accessToken);
                         fetchPages(accessToken); // Use the stored token
                     })
@@ -237,7 +225,6 @@ const FacebookLoginCheck = () => {
                         console.error('Error fetching long-lived token:', error);
                         alert('Failed to fetch long-lived access token.');
                     });
-
             } else if (response.status === 'not_authorized') {
                 alert('You need to authorize the app to manage your Facebook pages.');
             } else {
@@ -249,8 +236,6 @@ const FacebookLoginCheck = () => {
         });
     };
 
-
-    // Function to exchange short-lived token for a long-lived token
     const getLongLivedAccessToken = async (shortLivedAccessToken) => {
         try {
             const appId = '1332019044439778'; // Replace with your app's ID
@@ -275,7 +260,6 @@ const FacebookLoginCheck = () => {
         }
     };
 
-
     useEffect(() => {
         if (email) {
             console.log('Dashboard Data:', email);
@@ -289,7 +273,6 @@ const FacebookLoginCheck = () => {
                 version: 'v20.0'
             });
 
-            // Check login status on page load
             const storedToken = localStorage.getItem('fb_access_token');
             if (storedToken) {
                 console.log('User is already connected to Facebook.');
@@ -321,58 +304,9 @@ const FacebookLoginCheck = () => {
         window.FB.logout();   // Log out from Facebook as well
     };
 
-    // const handlePost = async () => {
-    //     const selectedPage = pages.find(page => page.id === selectedPageId);
-    //     if (selectedPage) {
-    //         if (!userId) {
-    //             alert('User ID is missing. Please log in again.');
-    //             return;
-    //         }
-
-    //         const formData = new FormData();
-
-    //         files.forEach((file) => {
-    //             formData.append('files', file);
-    //         });
-
-    //         if (message) {
-    //             formData.append('caption', message);
-    //         }
-
-    //         formData.append('accessToken', selectedPage.access_token);
-    //         formData.append('pageId', selectedPageId);
-    //         formData.append('postType', postType); // Include post type in form data
-    //         formData.append('email', email); // Send email to backend
-
-    //         console.log('post type added');
-    //         try {
-    //             const response = await fetch('https://smp-be-mysql.vercel.app/facebook-upload/upload', {
-    //                 method: 'POST',
-    //                 body: formData,
-    //             });
-
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! status: ${response.status}`);
-    //             }
-
-    //             const result = await response.json();
-    //             console.log('Upload result:', result);
-    //         } catch (error) {
-    //             console.error('Error uploading to backend:', error);
-    //             alert(`Error uploading: ${error.message}`);
-    //         }
-    //     } else {
-    //         alert('Please select a page to post to.');
-    //     }
-    // };
     const handlePost = async () => {
         const selectedPage = pages.find(page => page.id === selectedPageId);
         if (selectedPage) {
-            // if (!userId) {
-            //     alert('User ID is missing. Please log in again.');
-            //     return;
-            // }
-
             const formData = new FormData();
 
             files.forEach((file) => {
@@ -403,11 +337,10 @@ const FacebookLoginCheck = () => {
                 console.log('Upload result:', result);
                 alert('Post uploaded successfully!');
 
-                // Clear form fields
-                setFiles([]);
-                setMessage('');
-                setSelectedPageId('');
-                setPostType('feed');
+                setFiles([]);  // Clear files
+                setMessage('');  // Clear message
+                setSelectedPageId('');  // Reset selected page
+                setPostType('feed');  // Reset post type
             } catch (error) {
                 console.error('Error uploading to backend:', error);
                 alert(`Error uploading: ${error.message}`);
@@ -418,60 +351,10 @@ const FacebookLoginCheck = () => {
             alert('Please select a page to post to.');
         }
     };
-    // const handleSchedule = async () => {
-    //     const selectedPage = pages.find(page => page.id === selectedPageId);
-    //     if (selectedPage) {
-    //         if (!userId) {
-    //             alert('User ID is missing. Please log in again.');
-    //             return;
-    //         }
 
-    //         const formData = new FormData();
-
-    //         files.forEach((file) => {
-    //             formData.append('files', file);
-    //         });
-
-    //         if (message) {
-    //             formData.append('caption', message);
-    //         }
-
-    //         formData.append('scheduledDate', scheduledDate);
-
-    //         formData.append('accessToken', selectedPage.access_token);
-    //         formData.append('pageId', selectedPageId);
-    //         formData.append('postType', postType); // Include post type in form data
-    //         formData.append('email', email); // Send email to backend
-
-    //         console.log('post type added');
-    //         try {
-    //             const response = await fetch('https://smp-be-mysql.vercel.app/scheduled/schedule-post', {
-    //                 method: 'POST',
-    //                 body: formData,
-    //             });
-
-    //             if (!response.ok) {
-    //                 throw new Error(`HTTP error! status: ${response.status}`);
-    //             }
-
-    //             const result = await response.json();
-    //             console.log('Upload result:', result);
-    //         } catch (error) {
-    //             console.error('Error uploading to backend:', error);
-    //             alert(`Error uploading: ${error.message}`);
-    //         }
-    //     } else {
-    //         alert('Please select a page to post to.');
-    //     }
-    // };
     const handleSchedule = async () => {
         const selectedPage = pages.find(page => page.id === selectedPageId);
         if (selectedPage) {
-            // if (!userId) {
-            //     alert('User ID is missing. Please log in again.');
-            //     return;
-            // }
-
             if (!scheduledDate || new Date(scheduledDate) < new Date()) {
                 alert('Please select a future date and time for scheduling.');
                 return;
@@ -509,7 +392,6 @@ const FacebookLoginCheck = () => {
                 console.log('Upload result:', result);
                 alert('Post scheduled successfully!');
 
-                // Clear form fields
                 setFiles([]);
                 setMessage('');
                 setSelectedPageId('');
@@ -527,159 +409,105 @@ const FacebookLoginCheck = () => {
     };
 
     return (
-        <>
-            <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '600px', margin: 'auto' }}>
-
-                <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-white shadow-lg rounded-lg">
-                    <h1 className="text-center text-3xl font-bold text-blue-600 mb-6">Social Page Manager</h1>
-
-                    {!isLoggedIn && (
-                        <button
-                            onClick={loginWithFacebook}
-                            className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
-                        >
-                            Connect Account
-                        </button>
+        <div style={{ fontFamily: 'Arial, sans-serif', padding: '20px', maxWidth: '600px', margin: 'auto' }}>
+            <div className="font-sans px-6 py-8 max-w-3xl mx-auto bg-white shadow-md rounded-lg">
+                <div className="text-center">
+                    <h2 className="text-2xl font-bold mb-4">Facebook Post Manager</h2>
+                    <p>Logged in: {isLoggedIn ? 'Yes' : 'No'}</p>
+                    {isLoggedIn ? (
+                        <button onClick={handleLogout} className="bg-red-500 text-white p-2 rounded">Logout</button>
+                    ) : (
+                        <button onClick={loginWithFacebook} className="bg-blue-500 text-white p-2 rounded">Login with Facebook</button>
                     )}
+                </div>
 
-                    <button
-                        onClick={handleLogout}
-                        className="px-5 py-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
-                    >
-                        Disconnect
-                    </button>
-                    {isLoggedIn && pages.length > 0 && (
-                        <div>
-                            <h2 className="text-xl font-semibold mb-4">Select a Page to Post</h2>
+                {isLoggedIn && (
+                    <div>
+                        <div className="mb-4">
+                            <label className="block font-semibold mb-2">Select Facebook Page:</label>
                             <select
-                                onChange={(e) => setSelectedPageId(e.target.value)}
                                 value={selectedPageId}
-                                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+                                onChange={(e) => setSelectedPageId(e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded"
                             >
-                                <option value="">Select Page</option>
+                                <option value="">Select a page</option>
                                 {pages.map((page) => (
                                     <option key={page.id} value={page.id}>
                                         {page.name}
                                     </option>
                                 ))}
                             </select>
+                        </div>
 
+                        <div className="mb-4">
+                            <label className="block font-semibold mb-2">Message:</label>
                             <textarea
-                                placeholder="Write your post"
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
-                                className="w-full h-32 p-3 border border-gray-300 rounded-lg mb-4 resize-none focus:outline-none focus:ring focus:ring-blue-200"
+                                className="w-full p-2 border border-gray-300 rounded"
+                                rows="4"
                             ></textarea>
+                        </div>
 
+                        <div className="mb-4">
+                            <label className="block font-semibold mb-2">Upload Media:</label>
+                            <input type="file" multiple onChange={handleFileChange} className="w-full p-2 border border-gray-300 rounded" />
+                            <ul>
+                                {files.map((file, index) => (
+                                    <li key={index}>
+                                        {file.name} <button onClick={() => handleRemoveFile(index)} className="text-red-500">Remove</button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="mb-4">
+                            <label className="block font-semibold mb-2">Post Type:</label>
                             <select
-                                onChange={(e) => setPostType(e.target.value)}
                                 value={postType}
-                                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+                                onChange={(e) => setPostType(e.target.value)}
+                                className="w-full p-2 border border-gray-300 rounded"
                             >
                                 <option value="feed">Feed</option>
-                                <option value="videos">Videos</option>
-                                <option value="reels">Reels</option>
+                                <option value="story">Story</option>
                             </select>
+                        </div>
 
-                            {/* Conditional Note Display */}
-                            {postType === "feed" && (
-                                <p className="text-sm text-gray-600 mb-4">
-                                    You can upload only images or only videos for Feed posts, but not both at once.
-                                </p>
-                            )}
-                            {postType === "videos" && (
-                                <p className="text-sm text-gray-600 mb-4">
-                                    Please upload only videos for Video posts.
-                                </p>
-                            )}
-
-                            {/* File Input with Type Restriction */}
-                            <input
-                                type="file"
-                                accept={
-                                    postType === "feed"
-                                        ? "image/*,video/*"
-                                        : postType === "videos"
-                                            ? "video/*"
-                                            : "*/*"
-                                }
-                                multiple
-                                onChange={handleFileChange}
-                                className="block w-full text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-white file:bg-blue-600 file:cursor-pointer file:transition-all mb-4"
-                            />
-
-                            {/* File Type Validation: Restrict mixing of images and videos */}
-                            {postType === "feed" && (
-                                <p className="text-sm text-red-500 mb-4">
-                                    {files.some((file) => file.type.startsWith("image")) &&
-                                        files.some((file) => file.type.startsWith("video"))
-                                        ? "You can only upload either images or videos at once, not both."
-                                        : null}
-                                </p>
-                            )}
-
-                            <div className="flex flex-wrap gap-4 mb-4">
-                                {files.map((file, index) => (
-                                    <div key={index} className="relative text-center">
-                                        {file.type.startsWith("image") ? (
-                                            <img
-                                                src={URL.createObjectURL(file)}
-                                                alt="Preview"
-                                                className="w-24 h-24 object-cover rounded-lg"
-                                            />
-                                        ) : file.type.startsWith("video") ? (
-                                            <video
-                                                src={URL.createObjectURL(file)}
-                                                controls
-                                                className="w-24 h-24 rounded-lg"
-                                            />
-                                        ) : null}
-
-                                        <button
-                                            onClick={() => handleRemoveFile(index)}
-                                            className="absolute top-1 right-1 bg-red-500 text-white w-5 h-5 flex items-center justify-center rounded-full text-xs cursor-pointer"
-                                        >
-                                            ✕
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <button
-                                onClick={handlePost}
-                                disabled={isLoading}
-                                className={`px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4`}
-                            >
-                                {isLoading ? 'Posting...' : 'Post to Page'}
-                            </button>
-
-                            <label htmlFor="scheduledDate" className="block font-semibold mb-2">
-                                Schedule Post At
-                            </label>
+                        <div className="mb-4">
+                            <label className="block font-semibold mb-2">Schedule Post:</label>
                             <input
                                 type="datetime-local"
-                                id="scheduledDate"
                                 value={scheduledDate}
                                 onChange={(e) => setScheduledDate(e.target.value)}
-                                min={new Date().toISOString().slice(0, 16)}
-                                className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
+                                className="w-full p-2 border border-gray-300 rounded"
                             />
+                        </div>
 
+                        <div className="mb-4">
+                            <button
+                                onClick={handlePost}
+                                className="bg-green-500 text-white p-2 rounded w-full"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? 'Uploading...' : 'Post Now'}
+                            </button>
                             <button
                                 onClick={handleSchedule}
+                                className="bg-yellow-500 text-white p-2 rounded w-full mt-2"
                                 disabled={isLoading}
-                                className={`px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}  rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all`}
                             >
                                 {isLoading ? 'Scheduling...' : 'Schedule Post'}
                             </button>
                         </div>
-                    )}
-                </div>
+                    </div>
+                )}
             </div>
-        </>
+        </div>
     );
-}
+};
+
 export default FacebookLoginCheck;
+
 
 
 // import React, { useState, useEffect, useCallback } from 'react';
