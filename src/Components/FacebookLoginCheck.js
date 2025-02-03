@@ -634,6 +634,7 @@ const FacebookLoginCheck = () => {
                 id="scheduledDate"
                 value={scheduledDate}
                 onChange={(e) => setScheduledDate(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)} 
                 className="block w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring focus:ring-blue-200"
               />
       
