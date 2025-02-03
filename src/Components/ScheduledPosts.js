@@ -265,7 +265,7 @@ const ScheduledPosts = () => {
       if (!email) return;  // Ensure email exists before making the request
 
       try {
-        const response = await axios.post('https://smp-be-mysql.vercel.app/scheduled/count', {
+        const response = await axios.post('https://smp-be-mysql.vercel.app/scheduled/fetch-scheduled-posts', {
           email: email,
         });
         setPosts(response.data);

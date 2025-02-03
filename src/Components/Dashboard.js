@@ -463,7 +463,7 @@ const Dashboard = () => {
 
     const fetchScheduledPosts = async () => {
       try {
-        const response = await fetch("https://smp-be-mysql.vercel.app/scheduled//posts/scheduled/count", {
+        const response = await fetch("https://smp-be-mysql.vercel.app/scheduled/count", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
