@@ -25,7 +25,7 @@ const Media = ({ mediaUrl, index }) => {
   };
 
   return (
-    <div key={index} className="media-container">
+    <div key={index} className="media-container ">
       {isVideo && (
         <video
           src={mediaUrl}
@@ -41,7 +41,12 @@ const Media = ({ mediaUrl, index }) => {
         <img
           src={mediaUrl}
           alt={`Media ${index + 1}`}
-          style={{ maxWidth: "100%", margin: "10px 0", borderRadius: "8px" }}
+          style={{ width: "300px",
+            height: "200px",
+            objectFit: "cover",
+            margin: "10px 0",
+            borderRadius: "8px"
+         }}
           onError={handleImageError}
         />
       )}
@@ -210,7 +215,7 @@ const TotalPosts = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="post-actions flex space-x-4 mt-4">
+            <div className="post-actions h-32 flex space-x-4 mt-4">
               {post.media && post.media.length > 0 && post.media.every((mediaUrl) => mediaUrl.includes(".mp4")) ? (
                 <button
                   onClick={() => handleDelete(post)}

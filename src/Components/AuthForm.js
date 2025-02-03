@@ -56,8 +56,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
         navigate('/dashboard');
       }
       if (typeof onClose === 'function') {
-        onClose();
-        
+        onClose();       
       }
       
 
@@ -173,8 +172,6 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
               </h2>
 
               {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
-
-
 
               {!isResetPassword && isSignUp && (
                 <div className="mb-4">
