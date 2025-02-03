@@ -57,7 +57,10 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
       }
       if (typeof onClose === 'function') {
         onClose();
+        
       }
+      
+
     } catch (error) {
       console.error('Authentication error:', error);
       if (error.response) {
@@ -259,7 +262,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
               </div>
 
               <div className="mt-6 text-center">
-                <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick={onClose}>
+                <button type="button" className="text-sm text-gray-500 hover:text-gray-800" onClick= {onClose = () => { navigate('/')}}>
                   Close
                 </button>
               </div>
