@@ -171,8 +171,6 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
 
               {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}
 
-
-
               {!isResetPassword && isSignUp && (
                 <div className="mb-4">
                   <input
