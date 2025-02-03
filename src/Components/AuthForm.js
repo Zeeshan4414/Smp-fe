@@ -46,7 +46,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
           : 'https://smp-be-mysql.vercel.app/auth/signin';
         const payload = { name, email, password };
         const response = await axios.post(url, payload);
-        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('authToken', response.data.token);
         setIsLoggedIn(true);
         navigate('/dashboard');
       }
