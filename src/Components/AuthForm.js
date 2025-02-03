@@ -25,7 +25,8 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);  // Show loading while processing
+    setIsLoading(true);
+
     try {
       let url;
       let method = 'POST';
@@ -48,11 +49,13 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
         const response = await axios.post(url, payload);
         localStorage.setItem('authToken', response.data.token);
         setIsLoggedIn(true);
-        navigate('/dashboard');
-      }
 
-      if (typeof onClose === 'function') {
-        onClose();
+        if (typeof onClose === 'function') {
+          onClose(); // First close the modal or popup
+        }
+
+        // Redirect AFTER onClose
+        navigate('/dashboard');
       }
     } catch (error) {
       console.error('Authentication error:', error);
@@ -67,6 +70,7 @@ const AuthForm = ({ onClose = () => { }, isSignUp: initialSignUp = false, setIsL
       setIsLoading(false);
     }
   };
+
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
