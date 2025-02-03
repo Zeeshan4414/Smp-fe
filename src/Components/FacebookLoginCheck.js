@@ -275,6 +275,7 @@ const FacebookLoginCheck = () => {
         }
     };
 
+
     useEffect(() => {
         if (email) {
             console.log('Dashboard Data:', email);
@@ -312,7 +313,7 @@ const FacebookLoginCheck = () => {
             const fjs = d.getElementsByTagName(s)[0];
             fjs.parentNode.insertBefore(js, fjs);
         })(document, 'script', 'facebook-jssdk');
-    }, [statusChangeCallback, email]);
+    }, [statusChangeCallback, email, location.pathname]);
 
     const handleLogout = () => {
         localStorage.removeItem('fb_access_token'); // Clear the token
