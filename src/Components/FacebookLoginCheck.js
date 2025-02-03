@@ -455,6 +455,11 @@ const FacebookLoginCheck = () => {
               alert('User ID is missing. Please log in again.');
               return;
           }
+
+          if (!scheduledDate || new Date(scheduledDate) < new Date()) {
+            alert('Please select a future date and time for scheduling.');
+            return;
+        }
   
           const formData = new FormData();
   
@@ -621,7 +626,7 @@ const FacebookLoginCheck = () => {
               <button
                 onClick={handlePost}
                 disabled={isLoading}
-                className="px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4"
+                className= {`px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} rounded-lg w-[10rem] h-auto mx-auto flex text-lg font-medium transition-all mb-4`}
               >
                 {isLoading ? 'Posting...' : 'Post to Page'}
               </button>
@@ -641,7 +646,7 @@ const FacebookLoginCheck = () => {
               <button
                 onClick={handleSchedule}
                 disabled={isLoading}
-                className="px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}  rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all"
+                className={`px-5 py-3 text-white ${isLoading ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}  rounded-lg w-[12rem] h-auto mx-auto flex text-lg font-medium transition-all`}
               >
                 {isLoading ? 'Scheduling...' : 'Schedule Post'}
               </button>
