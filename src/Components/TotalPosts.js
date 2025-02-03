@@ -689,13 +689,13 @@ const TotalPosts = () => {
                           <Media mediaUrl={media} index={index} />
                           <div className="flex space-x-4 mt-4">
                             <button
-                              onClick={() => handleStartUpdate(post, index)}
+                              onClick={() => handleStartUpdate(posts, index)}
                               className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                             >
                               Update
                             </button>
                             <button
-                              onClick={() => handleDelete(post, index)}
+                              onClick={() => handleDelete(posts, index)}
                               className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                             >
                               Delete
@@ -711,13 +711,13 @@ const TotalPosts = () => {
                           />
                           <div className="flex space-x-4 mt-4">
                             <button
-                              onClick={() => handleStartUpdate(post, index)}
+                              onClick={() => handleStartUpdate(posts, index)}
                               className="update-button bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                             >
                               Update
                             </button>
                             <button
-                              onClick={() => handleDelete(post, index)}
+                              onClick={() => handleDelete(posts, index)}
                               className="delete-button bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                             >
                               Delete
