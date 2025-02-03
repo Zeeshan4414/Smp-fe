@@ -165,7 +165,7 @@
 // export default FacebookLoginCheck;
 
 // _______________________________________________________________________________________________________________________________
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation } from "react-router-dom";
 
 const FacebookLoginCheck = () => {
@@ -182,16 +182,16 @@ const FacebookLoginCheck = () => {
     const [isLoading, setIsLoading] = useState(false);
 
 
-    // const statusChangeCallback = useCallback((response) => {
-    //     console.log("i am here");
-    //     if (response.status === 'connected') {
-    //         setIsLoggedIn(true);
-    //         // fetchUserData(response.authResponse.userID);
-    //         fetchPages(response.authResponse.accessToken);
-    //     } else {
-    //         setIsLoggedIn(false);
-    //     }
-    // }, []);
+    const statusChangeCallback = useCallback((response) => {
+        console.log("i am here");
+        if (response.status === 'connected') {
+            setIsLoggedIn(true);
+            // fetchUserData(response.authResponse.userID);
+            fetchPages(response.authResponse.accessToken);
+        } else {
+            setIsLoggedIn(false);
+        }
+    }, []);
 
     // const fetchUserData = (id) => {
     //     setUserId(id);
@@ -283,33 +283,29 @@ const FacebookLoginCheck = () => {
 
         window.fbAsyncInit = function () {
             window.FB.init({
-                appId: '1332019044439778', // Replace with your app's ID
+                appId: '1332019044439778',
                 cookie: true,
                 xfbml: true,
                 version: 'v20.0'
             });
 
-            // Check login status on page load only once
+            // Check login status on page load
             const storedToken = localStorage.getItem('fb_access_token');
             if (storedToken) {
                 console.log('User is already connected to Facebook.');
                 setIsLoggedIn(true);
                 fetchPages(storedToken);  // Use the stored token
             } else {
-                // Check Facebook login status
                 window.FB.getLoginStatus(function (response) {
                     if (response.status === 'connected') {
                         setIsLoggedIn(true);
                         const accessToken = response.authResponse.accessToken;
                         fetchPages(accessToken);
-                    } else {
-                        setIsLoggedIn(false);
                     }
                 });
             }
         };
 
-        // Async SDK loading
         (function (d, s, id) {
             const js = d.createElement(s);
             js.id = id;
@@ -317,8 +313,7 @@ const FacebookLoginCheck = () => {
             const fjs = d.getElementsByTagName(s)[0];
             fjs.parentNode.insertBefore(js, fjs);
         })(document, 'script', 'facebook-jssdk');
-    }, [email]);  // Add only necessary dependencies (avoid using location.pathname here)
-
+    }, [statusChangeCallback, email, location.pathname, isLoggedIn]);
 
     const handleLogout = () => {
         localStorage.removeItem('fb_access_token'); // Clear the token
